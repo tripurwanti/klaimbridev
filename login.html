@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<style type="text/css">
+	body {
+		font-family: tahoma;
+		color: #2d334d;
+	}
+	
+	input[type=text], input[type=password] {
+		-webkit-transition: all 0.30s ease-in-out;
+		-moz-transition: all 0.30s ease-in-out;
+		-ms-transition: all 0.30s ease-in-out;
+		-o-transition: all 0.30s ease-in-out;
+		outline: none;
+		padding: 3px 0px 3px 3px;
+		margin: 5px 1px 3px 0px;
+		border: 1px solid #DDDDDD;
+		height: 20px;
+		width: 250px;
+	}
+	
+	input[type=submit] {
+        background-color: #2d334d;
+		border: none;
+		text-decoration: none;
+		color: white;
+		padding: 10px 20px;
+		cursor: pointer;
+	}
+	
+	input[type=submit]:hover {
+		box-shadow: 0 0 5px rgba(230, 122, 51, 1);
+	}
+	 
+	input[type=text]:focus, input[type=password]:focus {
+		box-shadow: 0 0 5px rgba(230, 122, 51, 1);
+		padding: 3px 0px 3px 3px;
+		margin: 5px 1px 3px 0px;
+		border: 1px solid rgba(23, 51, 77, 1);
+	}
+	</style>
+	
+	<title>Askrindo BRI - Klaim | Log In</title>
+	<link rel="shortcut icon" href="images/logofav.png"/>
+</head>
+<body style="background: url('images/testPoligont.png') 50% center / cover fixed;">
+	<!-- <body> -->
+
+	<table width="99%" style="position: absolute; top: 50%; -ms-transform: translateY(-50%); transform: translateY(-50%);">
+		<tr>
+			<td width="60%">
+				<img src="images/akhlakValues2.png" width="100%">
+			</td>
+			<td style="text-align: center;">				
+				<div style="margin: auto; margin-top: -20%;">
+					<img src="images/logo-askrindo-ifg.png" width="200px">
+					<img src="images/Logo_BRI.png" width="150px" style="text-align: center; margin-bottom: 15px; margin-left: 5%;">
+				</div>
+				<h3 style="margin-top: 10%;">Portal Klaim BRI</h3>
+				
+					<form action="cek_login.php" method="post">
+						<label style="float: center;">Username</label><br/>
+						<input type="text" name="username"><br/><br/>
+						<label style="float: center;">Password</label><br/>
+						<input type="password" name="password"><br/><br/>
+						<input type="submit" class="btn btn-succes" value="SIGN IN">
+					</form>
+				
+				
+			</td>
+		</tr>
+	</table>
+	
+	<small style="position: absolute; left: 0; top: 95%; text-align: center; width: 100%;"><b>Copyrights 2021 - Askrindo</b></small>
+</body>
+</html>
