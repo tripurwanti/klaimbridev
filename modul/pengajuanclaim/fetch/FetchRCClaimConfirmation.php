@@ -1,7 +1,7 @@
 <?php
 //fetch.php
 error_reporting(1);
-include "../../config/koneksi_askred.php";
+include "../../../config/koneksi_askred.php";
 session_start();
 
 $norekPinjaman = $_REQUEST['norek'];
