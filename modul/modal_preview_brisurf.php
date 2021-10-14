@@ -48,7 +48,8 @@ if ($statusKlaim == '0') {
 <div style="border: 2px solid #f0f0f0; border-radius: 5px; margin-top: 10px; padding: 10px; background-color:#f0f0f0">
 
     <form action="modul/pengajuanclaim/prosesUploadDocument.php" method="POST" enctype="multipart/form-data"
-        onsubmit="return confirm('Apakah dokumen yang diunggah sudah benar?');">
+        onsubmit="return fileValidationFilePdf()">
+        <!-- onsubmit="return Validate(this);"> -->
         <!-- <form action="" method="POST" enctype="multipart/form-data"> -->
         <!-- <form method="POST" id="formUpload"> -->
         <input id='norekPinjaman' type="hidden" name="no_rekening_pinjaman" value="<?php echo $_GET[no_fasilitas]; ?>">
@@ -59,7 +60,7 @@ if ($statusKlaim == '0') {
                 </td>
                 <td colspan="2">
                     <input id="dok_lkn" type="file" class="form-control" name="dok_lkn" value="Dokumen LKN">
-                    <!-- <span class="errorMSG" id="msgerrorlkn"></span> -->
+                    <span style="color: red; font-size: 13px;" id="msgerrorlkn"></span>
                 </td>
             </tr>
             <tr>
@@ -68,6 +69,7 @@ if ($statusKlaim == '0') {
                 </td>
                 <td colspan="2">
                     <input id="dok_sph" type="file" class="form-control" name="dok_sph" value="Dokumen SPH">
+                    <span style="color: red; font-size: 13px;" id="msgerrorsph"></span>
 
                 </td>
             </tr>
@@ -85,7 +87,9 @@ if ($statusKlaim == '0') {
                     <label style="font-size: 0.8em;">Dokumen SLIK</label>
                 </td>
                 <td colspan="2">
-                    <input id="dok_slik" type="file" class="form-control" name="dok_slik" value="Dokumen SLIK">
+                    <input id="dok_slik" type="file" class="form-control" name="dok_slik" value="Dokumen SLIK"
+                        onchange="return fileValidationFilePdf()">
+                    <span style="color: red; font-size: 13px;" id="msgerrorslik"></span>
 
                 </td>
             </tr>
@@ -94,7 +98,9 @@ if ($statusKlaim == '0') {
                     <label style="font-size: 0.8em;">Dokumen SKU</label>
                 </td>
                 <td colspan="2">
-                    <input id="dok_sku" type="file" class="form-control" name="dok_sku" value="Dokumen SKU">
+                    <input id="dok_sku" type="file" class="form-control" name="dok_sku" value="Dokumen SKU"
+                        onchange="return fileValidationFilePdf()">
+                    <span style="color: red; font-size: 13px;" id="msgerrorsku"></span>
 
                 </td>
             </tr>
@@ -103,8 +109,9 @@ if ($statusKlaim == '0') {
                     <label style="font-size: 0.8em;">Rekening Koran</label>
                 </td>
                 <td colspan="2">
-                    <input id="dok_rc" type="file" class="form-control" name="dok_rc" value="Dokumen SKU">
-
+                    <input id="dok_rc" type="file" class="form-control" name="dok_rc" value="Dokumen SKU"
+                        onchange="return fileValidationFilePdf()">
+                    <span style="color: red; font-size: 13px;" id="msgerrorrc"></span>
                 </td>
             </tr>
             <tr>
@@ -113,7 +120,8 @@ if ($statusKlaim == '0') {
                 </td>
                 <td>
                     <input id="dok_additional" type="file" class="form-control" name="dok_additional"
-                        value="Dokumen Tambahan">
+                        value="Dokumen Tambahan" onchange="return fileValidationFilePdf()">
+                    <span style="color: red; font-size: 13px;" id="msgerroradditional"></span>
 
                 </td>
                 <td>
@@ -144,21 +152,14 @@ $qDinfoDokLkn = mssql_query(
     $con3
 );
 $nqDinfoDokLkn = mssql_num_rows($qDinfoDokLkn);
-
-// if ($sumberklaim == 'BRISURF' && ($nqDinfoDokSph <= 0 || $nqDinfoDokLkn <= 0)) {
 ?>
 
 <label style=" font-size: 0.9em;margin-top: 20px; "><b>Dokumen Lengkap</b></label><br />
 <div style=" border: 2px solid #f0f0f0; border-radius: 5px; margin-top: 10px; padding: 10px; background-color:#f0f0f0">
-    <!-- <form action="#" method="POST" onsubmit="return alert('Dokumen LKN dan/atau SPH belum di unggah');"> -->
-    <?php
-    // } else {
-    ?>
+
     <form action="modul/pengajuanclaim/prosesVerifikasiDocBrisurf.php" method="POST"
         onsubmit="return confirm('Data Sudah Benar?');">
-        <?php
-        // }
-        ?>
+
         <input type="hidden" name="no_fasilitas" value="<?php echo $_GET[no_fasilitas]; ?>">
         <input type="hidden" name="plafond" value="<?php echo $_GET[plafond]; ?>">
         <input type="hidden" name="tgl_mulai" value="<?php echo $_GET[tgl_mulai]; ?>">
@@ -172,36 +173,44 @@ $nqDinfoDokLkn = mssql_num_rows($qDinfoDokLkn);
 
             $qD = mssql_query("SELECT * FROM askred_dokumen_claim WHERE kode_dokumen_digital in ('ktp', 'slik', 'data_usaha', 'lkn', 'sph') ORDER BY id ASC;");
             $nqD = mssql_num_rows($qD);
-            if ($nqD > 0) {
+            // if ($nqD > 0) {
             ?>
             <table>
                 <!-- <tr>
                     <td colspan="3"><small><b>Dokumen Lengkap</b></small></td>
                 </tr> -->
                 <?php
-                    while ($dqD = mssql_fetch_array($qD)) {
-                    ?>
+                while ($dqD = mssql_fetch_array($qD)) {
+                ?>
                 <tr>
                     <input type="hidden" name="banyak_dokumen" value="<?php echo $nqD; ?>">
+                    <?php
+                        $qDinfo = mssql_query("SELECT * FROM askred_dokumen_info WHERE no_rekening_pinjaman = '$norekPinjaman' AND kode_dokumen = '$dqD[kode_dokumen_digital]';");
+                        $nqDinfo = mssql_num_rows($qDinfo);
+                        ?>
                     <td>
                         <div class="checkbox-inline1">
                             <label style="font-weight: normal; font-size: 0.9em;">
                                 <?php
-                                        if ($_GET['q'] == 0) {
-                                            $disabled = "";
-                                        } else {
-                                            $disabled = "disabled";
-                                        }
-                                        ?>
+                                    $disabled = "";
+                                    if ($_GET['q'] == 0 && $nqDinfo > 0) {
+                                        $disabled = "";
+                                    } else if ($_GET['q'] == 0 && $nqDinfo <= 0) {
+                                        $disabled = "disabled";
+                                    } else {
+                                        $disabled = "disabled";
+                                    }
+                                    ?>
 
                     </td>
                     <td>
-                        <input type="hidden" name="cekDokumen[<?php echo $dqD[kode_dokumen_digital]; ?>]"
+                        <input type="hidden" name="cekDokumenLengkap[<?php echo $dqD[kode_dokumen_digital]; ?>]"
                             value="<?php echo $dqD[kode_dokumen_digital]; ?>" />
-                        <input type="checkbox" name="cekDokumen[<?php echo $dqD[kode_dokumen_digital]; ?>]" value="x"
-                            <?php echo $disabled; ?>>
+
+                        <input type="checkbox" name="cekDokumenLengkap[<?php echo $dqD[kode_dokumen_digital]; ?>]"
+                            value="doklengkap" <?php echo $disabled; ?>>
                         <?php //echo  " [" . $dqD[kode_dokumen_digital] . "]"; 
-                                ?>
+                            ?>
                     </td>
                     <td>
                         &nbsp;&nbsp;<?php echo $dqD[dokumen_claim]; ?>
@@ -209,59 +218,65 @@ $nqDinfoDokLkn = mssql_num_rows($qDinfoDokLkn);
                     <td>
                         &nbsp;&nbsp;<?php echo " [" . $dqD[kode_dokumen_digital] . "]"; ?>
                     </td>
-                    <?php
-                            $qDinfo = mssql_query("SELECT * FROM askred_dokumen_info WHERE no_rekening_pinjaman = '$norekPinjaman' AND kode_dokumen = '$dqD[kode_dokumen_digital]';");
-                            $nqDinfo = mssql_num_rows($qDinfo);
-
-
-                            ?>
-
-
+                    <td>
+                        &nbsp;<input type="hidden" style="height: 20px;"
+                            name="textDokumen[<?php echo $dqD[kode_dokumen]; ?>]">
+                    </td>
                     <td>
                         &nbsp;&nbsp;
                         <?php
-                                if ($nqDinfo > 0) {
-                                ?>
+                            if ($nqDinfo > 0) {
+                            ?>
                         <a href="modul/pengajuanclaim/downloadDocBrisurf.php?no_rek=<?php echo $norekPinjaman; ?>&kode=<?php echo $dqD[kode_dokumen_digital]; ?>"
                             style="float:right;" title="Klik untuk mendownload Dokumen"><i class="fa fa-download"></i>
                         </a>
                         <?php
-                                } else {
-                                ?>
+                            } else {
+                            ?>
                         <a href="modul/pengajuanclaim/downloadDocBrisurf.php?no_rek=<?php echo $norekPinjaman; ?>&kode=<?php echo $dqD[kode_dokumen_digital]; ?>"
                             style="float:right;  pointer-events: auto; color: #ccc; cursor: default;"
                             title="Dokumen tidak tersedia untuk di download">
                             <i class="fa fa-download"></i>
                         </a>
                         <?php
-                                }
-                                ?>
+                            }
+                            ?>
 
                         </label>
         </div>
         </td>
 
         <?php
-                    }
+                }
     ?>
 
         </tr>
         <tr>
             <td>
                 <div class="checkbox-inline1">
-                    <label style="font-weight: normal; font-size: 0.9em;">
-                        <?php
-                    if ($_GET['q'] == 0) {
-                        $disabled = "";
-                    } else {
-                        $disabled = "disabled";
-                    }
-                    ?>
+                    <label style="font-weight: normal; font-size: 0.9em;"><?php
+
+                                                                        $qDinfoRcUpload = mssql_query("SELECT * FROM askred_dokumen_info WHERE no_rekening_pinjaman = '$norekPinjaman' AND kode_dokumen = 'Rc';");
+                                                                        $nqDinfoRcUpload = mssql_num_rows($qDinfoRcUpload);
+
+                                                                        $qDinfoRcRaw = mssql_query("SELECT ark.* FROM askred_rekening_koran ark
+                                                                        INNER JOIN askred_claim_confirmation acc ON ark.id_claim_confirmation = acc.id
+                                                                        WHERE acc.nomor_peserta = '$norekPinjaman'");
+                                                                        $nqDinfoRcRaw = mssql_num_rows($qDinfoRcRaw);
+
+                                                                        if ($_GET['q'] == 0 && ($nqDinfoRc > 0 || $nqDinfoRcRaw > 0)) {
+                                                                            $disabledCheckboxRC = "";
+                                                                        } else if ($_GET['q'] == 0 && $nqDinfoRc <= 0 && $nqDinfoRcRaw <= 0) {
+                                                                            $disabledCheckboxRC = "disabled";
+                                                                        } else {
+                                                                            $disabledCheckboxRC = "disabled";
+                                                                        }
+                                                                        ?>
 
             </td>
             <td>
-                <input type="hidden" name="cekDokumen[RC]" value="RC" />
-                <input type="checkbox" name="cekDokumen[RC]" value="x" <?php echo $disabled; ?>>
+                <input type="hidden" name="cekDokumenLengkap[RC]" value="RC" />
+                <input type="checkbox" name="cekDokumenLengkap[RC]" value="x" <?php echo $disabledCheckboxRC; ?>>
             </td>
             <td>
                 &nbsp;&nbsp;<?php echo "Rekening Koran" ?>
@@ -270,36 +285,101 @@ $nqDinfoDokLkn = mssql_num_rows($qDinfoDokLkn);
                 &nbsp;&nbsp;<?php echo " [RC]"; ?>
             </td>
             <td>
+                &nbsp;<input type="hidden" style="height: 20px;" name="textDokumen[RC]">
+            </td>
+            <td>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
                     href="media.php?module=listRCClaimConfirmation&norek=<?php echo $norekPinjaman;  ?>"
                     style="float:right;" target="_blank" title="Daftar Rekening Koran"><i class="fa fa-list"></i></a>
                 </label>
             </td>
         </tr>
+        <tr>
+            <td>
+                <div class="checkbox-inline1">
+                    <label style="font-weight: normal; font-size: 0.9em;">
+
+            </td>
+            <td>
+                <input type="hidden" name="cekDokumenAdditional[additional]" value="additional" />
+                <input type="checkbox" name="cekDokumenAdditional[additional]" value="x"
+                    <?php echo $disabledCheckboxRC; ?>>
+            </td>
+            <td>
+                &nbsp;&nbsp;<?php echo "Dokumen Tambahan"
+                        ?>
+            </td>
+            <td>
+                &nbsp;&nbsp;<?php echo " [dokumen tambahan]";
+                        ?>
+            </td>
+            <td>
+                &nbsp;<input type="hidden" style="height: 20px;" name="textDokumen[additional]">
+            </td>
+            <td>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="modul/pengajuanclaim/downloadDocBrisurf.php?no_rek=<?php echo $norekPinjaman; ?>&kode=<?php echo $dqD[kode_dokumen_digital]; ?>"
+                    style="float:right;" title="Klik untuk mendownload Dokumen"><i class="fa fa-download"></i>
+                </a>
+                </label>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <div class="checkbox-inline1">
+                    <label style="font-weight: normal; font-size: 0.9em;">
+
+            </td>
+            <td>
+                <input type="hidden" name="cekDokumenLengkap[ReportPayoff]" value="reportpayoff" />
+                <input type="checkbox" name="cekDokumenLengkap[ReportPayoff]" value="x"
+                    <?php echo $disabledCheckboxRC; ?>>
+            </td>
+            <td>
+                &nbsp;&nbsp;<?php echo "Report Payoff" ?>
+            </td>
+            <td>
+                &nbsp;&nbsp;<?php echo " [reportpayoff]"; ?>
+            </td>
+            <td>
+                &nbsp;<input type="hidden" style="height: 20px;" name="textDokumen[reportpayoff]">
+            </td>
+            <td>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="modul/pengajuanclaim/downloadDocBrisurf.php?no_rek=<?php echo $norekPinjaman; ?>&kode=<?php echo $dqD[kode_dokumen_digital]; ?>"
+                    style="float:right;" title="Klik untuk mendownload Dokumen"><i class="fa fa-download"></i>
+                </a>
+                </label>
+            </td>
+        </tr>
+
         </table>
 
         <?php
-            } else {
-?>
-        <div class="checkbox-inline1">
+    // } else {
+    ?>
+        <!-- <div class="checkbox-inline1">
             <label style="font-weight: normal; font-size: 0.9em;">
                 <input type="checkbox" name="tidakAdaDokumen" value="1" checked>
                 Tidak ada Dokumen! &nbsp;
             </label>
-        </div>
+        </div> -->
         <?php
-            }
-?>
+    // }
+    ?>
 
 </div>
 <?php
 
-if ($_GET['q'] == 0) {
+if ($_GET['q'] == 0 && ($disabled == "disabled" || $disabledCheckboxRC == "disabled")) {
+    echo "<button type='submit' class='btn btn-primary' disabled >Dokumen Lengkap</button>&nbsp;";
+} else if ($_GET['q'] == 0 && $disabled != "disabled" && $disabledCheckboxRC != "disabled") {
     echo "<button type='submit' class='btn btn-primary'>Dokumen Lengkap</button>&nbsp;";
-    // echo "<button type='submit' name='doklengkap' class='btn btn-danger'>Dokumen Lengkap Manual!</button>";
-} elseif ($_GET['q'] == 3) {
-    echo "<button type='submit' name='doklengkap' class='btn btn-danger'>Dokumen Lengkap Manual!</button>";
 }
+// else if ($_GET['q'] == 3) {
+//     echo "<button type='submit' name='doklengkapManual' class='btn btn-danger'>Dokumen Lengkap Manual!</button>";
+// }
 ?>
 </form>
 </div>
@@ -307,15 +387,8 @@ if ($_GET['q'] == 0) {
 
 <label style="font-size: 0.9em;margin-top: 20px; "><b>Dokumen Tidak Lengkap</b></label><br />
 <div style="border: 2px solid #f0f0f0; border-radius: 5px; margin-top: 10px; padding: 10px; background-color:#f0f0f0">
-    <!-- <form action="#" method="POST" onsubmit="return alert('Dokumen LKN dan/atau SPH belum di unggah');"> -->
-    <?php
-    // } else {
-    ?>
     <form action="modul/pengajuanclaim/prosesVerifikasiDocBrisurf.php" method="POST"
         onsubmit="return confirm('Data Sudah Benar?');">
-        <?php
-        // }
-        ?>
         <input type="hidden" name="no_fasilitas" value="<?php echo $_GET[no_fasilitas]; ?>">
         <input type="hidden" name="plafond" value="<?php echo $_GET[plafond]; ?>">
         <input type="hidden" name="tgl_mulai" value="<?php echo $_GET[tgl_mulai]; ?>">
@@ -353,7 +426,7 @@ if ($_GET['q'] == 0) {
 
                     </td>
                     <td>
-                        <input type="hidden" name="cekDokumen[<?php echo $dqD[kode_dokumen_digital]; ?>]"
+                        <input type="hidden" name="cekDokumenTdkLengkap[<?php echo $dqD[kode_dokumen_digital]; ?>]"
                             value="<?php echo $dqD[kode_dokumen_digital]; ?>" />
                         <input type="checkbox" name="cekDokumen[<?php echo $dqD[kode_dokumen_digital]; ?>]" value="x"
                             <?php echo $disabled; ?>>
@@ -481,5 +554,46 @@ if ($_GET['q'] == 0) {
 
 
 <script type="text/javascript" language="javascript">
+function fileValidationFilePdf() {
+    // var fileInputLkn = document.getElementById('dok_lkn');
+    // var filePathLkn = fileInputLkn.value;
 
+    // var fileInputSph = document.getElementById('dok_sph');
+    // var filePathSph = fileInputSph.value;
+
+    // // Allowing file type
+    // // var allowedExtensions =
+    // //     /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+    // var msgerror = "Tipe file yang harus diunggah harus .pdf";
+    // var allowedExtensions =
+    //     /(\.pdf)$/i;
+
+    // // if (fileInputLkn.files.length != 0) {
+    // if (!allowedExtensions.exec(filePathLkn)) {
+    //     $("#msgerrorlkn").text("Tipe file yang harus diunggah harus .pdf");
+    //     // alert('Invalid file type');
+    //     filePathLkn.value = '';
+    //     return false;
+    // } else {
+    //     $("#msgerrorlkn").text("");
+    //     // alert('Invalid file type');
+    //     filePathLkn.value = '';
+    //     return true;
+    // }
+
+    // if (!allowedExtensions.exec(filePathSph)) {
+    //     $("#msgerrorsph").text("Tipe file yang harus diunggah harus .pdf");
+    //     // alert('Invalid file type');
+    //     filePathSph.value = '';
+    //     return false;
+    // } else {
+    //     $("#msgerrorsph").text("");
+    //     // alert('Invalid file type');
+    //     filePathSph.value = '';
+    //     return true;
+    // }
+    // }
+
+
+}
 </script>
