@@ -23,7 +23,7 @@ $filenameDokSph_temp = $_FILES['dok_sph']['tmp_name'];
 
 $filenameDokKtp = $_FILES['ktp']['name'];
 $sizeDokSphKtp = $_FILES['ktp']['size'];
-$tipeDokSphKtp = $_FILES['ktp']['type'];
+$tipeDokSphKtp = pathinfo($filenameDokKtp, PATHINFO_EXTENSION);
 $filenameDokKtp_temp = $_FILES['ktp']['tmp_name'];
 
 $filenameDokSlik = $_FILES['dok_slik']['name'];
@@ -41,7 +41,7 @@ $sizeDokSphRC = $_FILES['dok_rc']['size'];
 $tipeDokSphRC = $_FILES['dok_rc']['type'];
 $filenameDokRC_temp = $_FILES['dok_rc']['tmp_name'];
 
-$filenameDokAdditional = $_FILES['dok_additional']['name'];
+$filenameDokAdditional = pathinfo($_FILES['dok_additional']['name'], PATHINFO_FILENAME);
 $sizeDokSphAdditional = $_FILES['dok_additional']['size'];
 $tipeDokSphAdditional = $_FILES['dok_additional']['type'];
 $filenameDokAdditional_temp = $_FILES['dok_additional']['tmp_name'];
@@ -57,21 +57,23 @@ $targetfilenameRc = "rc";
 $targetfilenameAdditional = $_POST['dokumenname'];
 
 $target_dir = "\upload/";
-$target_file_lkn = $target_dir . $nomorRekening . "/" . $targetfilenameLkn . ".pdf"; //destination
-$target_file_sph = $target_dir . $nomorRekening . "/" . $targetfilenameSph . ".pdf"; //destination
-$target_file_ktp = $target_dir . $nomorRekening . "/" . $targetfilenameKtp . ".pdf"; //destination
-$target_file_slik = $target_dir . $nomorRekening . "/" . $targetfilenameSlik . ".pdf"; //destination
-$target_file_sku = $target_dir . $nomorRekening . "/" . $targetfilenameSku . ".pdf"; //destination
-$target_file_rc = $target_dir . $nomorRekening . "/" . $targetfilenameRc . ".pdf"; //destination
-$target_file_additional = $target_dir . $nomorRekening . "/" . $targetfilenameAdditional . ".pdf"; //destination
+$target_file_lkn = SITE_ROOT . $target_dir . $nomorRekening . "/" . $targetfilenameLkn . ".pdf"; //destination
+$target_file_sph = SITE_ROOT . $target_dir . $nomorRekening . "/" . $targetfilenameSph . ".pdf"; //destination
+$target_file_ktp = SITE_ROOT . $target_dir . $nomorRekening . "/" . $targetfilenameKtp . "." . $tipeDokSphKtp; //destination
+$target_file_slik = SITE_ROOT . $target_dir . $nomorRekening . "/" . $targetfilenameSlik . ".pdf"; //destination
+$target_file_sku = SITE_ROOT . $target_dir . $nomorRekening . "/" . $targetfilenameSku . ".pdf"; //destination
+$target_file_rc = SITE_ROOT . $target_dir . $nomorRekening . "/" . $targetfilenameRc . ".pdf"; //destination
+// $target_file_additional = $target_dir . $nomorRekening . "/" . $targetfilenameAdditional . ".pdf"; //destination
+$target_file_additional = SITE_ROOT . $target_dir . $nomorRekening . "/" . $filenameDokAdditional . ".pdf";; //destination
 
 $destinationFtpDirSph = "/" . $nomorRekening . "/" . $targetfilenameSph . ".pdf";
 $destinationFtpDirLkn = "/" . $nomorRekening . "/" . $targetfilenameLkn . ".pdf";
-$destinationFtpDirKtp = "/" . $nomorRekening . "/" . $targetfilenameKtp . ".pdf";
+$destinationFtpDirKtp = "/" . $nomorRekening . "/" . $targetfilenameKtp . "." . $tipeDokSphKtp;
 $destinationFtpDirSlik = "/" . $nomorRekening . "/" . $targetfilenameSlik . ".pdf";
 $destinationFtpDirSku = "/" . $nomorRekening . "/" . $targetfilenameSku . ".pdf";
 $destinationFtpDirRc = "/" . $nomorRekening . "/" . $targetfilenameRc . ".pdf";
-$destinationFtpDirAdditional = "/" . $nomorRekening . "/" . $targetfilenameAdditional . ".pdf";
+// $destinationFtpDirAdditional = "/" . $nomorRekening . "/" . $targetfilenameAdditional . ".pdf";
+$destinationFtpDirAdditional = "/" . $nomorRekening . "/" .  $filenameDokAdditional . ".pdf";;
 
 $dir_ftp =  "/DEV\/" . $nomorRekening . "/";
 $dir =  SITE_ROOT . $target_dir . $nomorRekening;
@@ -92,18 +94,29 @@ $result = "";
 
 if (ftp_mkdir($conn, $dir_ftp) || !ftp_mkdir($conn, $dir_ftp)) {
     if (!empty($_FILES['dok_lkn']['tmp_name'])) {
-        if (move_uploaded_file($filenameDokLkn_temp, SITE_ROOT . $target_file_lkn)) {
+        if (move_uploaded_file($filenameDokLkn_temp, $target_file_lkn)) {
             $upload = ftp_put($conn, $dir_ftp .  $targetfilenameLkn . ".pdf", "C:/xamppx/htdocs/" . $rootdir . "/modul/pengajuanclaim/upload/" . $nomorRekening . "/" . $targetfilenameLkn . ".pdf", FTP_BINARY);
             if ($upload) {
+                $cekDokInfo =  mssql_query("SELECT * FROM askred_dokumen_info WHERE no_rekening_pinjaman='" . $nomorRekening . "' AND kode_dokumen = '" . $targetfilenameLkn . "'", $con);
+                $rcekDokInfo = mssql_fetch_array($cekDokInfo);
                 $created_date = date("Y-m-d H:i:s");
-                $sql = mssql_query("INSERT INTO askred_dokumen_info
+                if ($rcekDokInfo > 0) {
+                    $sql = mssql_query("UPDATE askred_dokumen_info
+                    SET modified_date='" . $created_date . "'
+                    WHERE no_rekening_pinjaman='" . $nomorRekening . "' AND kode_dokumen = 'lkn' ;
+                    ", $con);
+                } else {
+                    $sql = mssql_query("INSERT INTO askred_dokumen_info
                                       (no_rekening_pinjaman, kode_dokumen, file_name, url_dokumen, path_local_dokumen, tipe_dokumen, created_date, modified_date, external_id)
                                        VALUES('" . $nomorRekening . "', 'lkn', '" . $targetfilenameLkn . "', 'portal', '" . $dir_ftp .  $targetfilenameLkn . ".pdf" . "', 'pdf', '" . $created_date . "', NULL, '-')", $con);
+                }
+
                 if ($result == "") {
                     $result = "Dokumen LKN sukses di upload";
                 } else {
                     $result = $result . ", Dokumen LKN sukses di upload";
                 }
+                unlink($target_file_lkn);
             } else {
                 if ($result == "") {
                     $result = "Dokumen LKN gagal di upload";
@@ -121,18 +134,28 @@ if (ftp_mkdir($conn, $dir_ftp) || !ftp_mkdir($conn, $dir_ftp)) {
     }
 
     if (!empty($_FILES['dok_sph']['tmp_name'])) {
-        if (move_uploaded_file($filenameDokSph_temp, SITE_ROOT . $target_file_sph)) {
+        if (move_uploaded_file($filenameDokSph_temp, $target_file_sph)) {
             $upload = ftp_put($conn, $dir_ftp .  $targetfilenameSph . ".pdf", "C:/xamppx/htdocs/" . $rootdir . "/modul/pengajuanclaim/upload/" . $nomorRekening . "/" . $targetfilenameSph . ".pdf", FTP_BINARY);
             if ($upload) {
+                $cekDokInfo =  mssql_query("SELECT * FROM askred_dokumen_info WHERE no_rekening_pinjaman='" . $nomorRekening . "' AND kode_dokumen = '" . $targetfilenameSph . "'", $con);
+                $rcekDokInfo = mssql_fetch_array($cekDokInfo);
                 $created_date = date("Y-m-d H:i:s");
-                $sql = mssql_query("INSERT INTO askred_dokumen_info
-                                  (no_rekening_pinjaman, kode_dokumen, file_name, url_dokumen, path_local_dokumen, tipe_dokumen, created_date, modified_date, external_id)
-                                   VALUES('" . $nomorRekening . "', 'sph', '" . $targetfilenameSph . "', 'portal', '" . $dir_ftp .  $targetfilenameSph . ".pdf" . "', 'pdf', '" . $created_date . "', NULL, '-')", $con);
+                if ($rcekDokInfo > 0) {
+                    $sql = mssql_query("UPDATE askred_dokumen_info
+                    SET modified_date='" . $created_date . "'
+                    WHERE no_rekening_pinjaman='" . $nomorRekening . "' AND kode_dokumen = 'sph' ;
+                    ", $con);
+                } else {
+                    $sql = mssql_query("INSERT INTO askred_dokumen_info
+                    (no_rekening_pinjaman, kode_dokumen, file_name, url_dokumen, path_local_dokumen, tipe_dokumen, created_date, modified_date, external_id)
+                     VALUES('" . $nomorRekening . "', 'sph', '" . $targetfilenameSph . "', 'portal', '" . $dir_ftp .  $targetfilenameSph . ".pdf" . "', 'pdf', '" . $created_date . "', NULL, '-')", $con);
+                }
                 if ($result == "") {
                     $result = "Dokumen SPH sukses di upload";
                 } else {
                     $result = $result . ", Dokumen SPH sukses di upload";
                 }
+                unlink($target_file_sph);
             } else {
                 if ($result == "") {
                     $result = "Dokumen SPH gagal di upload";
@@ -150,18 +173,28 @@ if (ftp_mkdir($conn, $dir_ftp) || !ftp_mkdir($conn, $dir_ftp)) {
     }
 
     if (!empty($_FILES['ktp']['tmp_name'])) {
-        if (move_uploaded_file($filenameDokKtp_temp, SITE_ROOT . $target_file_ktp)) {
-            $upload = ftp_put($conn, $dir_ftp .  $targetfilenameKtp . ".pdf", "C:/xamppx/htdocs/" . $rootdir . "/modul/pengajuanclaim/upload/" . $nomorRekening . "/" . $targetfilenameKtp . ".pdf", FTP_BINARY);
+        if (move_uploaded_file($filenameDokKtp_temp,  $target_file_ktp)) {
+            $upload = ftp_put($conn, $dir_ftp .  $targetfilenameKtp . "." . $tipeDokSphKtp, "C:/xamppx/htdocs/" . $rootdir . "/modul/pengajuanclaim/upload/" . $nomorRekening . "/" . $targetfilenameKtp . "." . $tipeDokSphKtp, FTP_BINARY);
             if ($upload) {
+                $cekDokInfo =  mssql_query("SELECT * FROM askred_dokumen_info WHERE no_rekening_pinjaman='" . $nomorRekening . "' AND kode_dokumen = '" . $targetfilenameKtp . "'", $con);
+                $rcekDokInfo = mssql_fetch_array($cekDokInfo);
                 $created_date = date("Y-m-d H:i:s");
-                $sql = mssql_query("INSERT INTO askred_dokumen_info
+                if ($rcekDokInfo > 0) {
+                    $sql = mssql_query("UPDATE askred_dokumen_info
+                    SET modified_date='" . $created_date . "', path_local_dokumen = '" . $dir_ftp .  $targetfilenameKtp . "." . $tipeDokSphKtp . "', tipe_dokumen = '" . $tipeDokSphKtp . "'
+                    WHERE no_rekening_pinjaman='" . $nomorRekening . "' AND kode_dokumen = 'ktp' ;
+                    ", $con);
+                } else {
+                    $sql = mssql_query("INSERT INTO askred_dokumen_info
                                   (no_rekening_pinjaman, kode_dokumen, file_name, url_dokumen, path_local_dokumen, tipe_dokumen, created_date, modified_date, external_id)
-                                   VALUES('" . $nomorRekening . "', 'ktp', '" . $targetfilenameKtp . "', 'portal', '" . $dir_ftp .  $targetfilenameKtp . ".pdf" . "', 'pdf', '" . $created_date . "', NULL, '-')", $con);
+                                   VALUES('" . $nomorRekening . "', 'ktp', '" . $targetfilenameKtp . "', 'portal', '" . $dir_ftp .  $targetfilenameKtp . "." . $tipeDokSphKtp . "', '" . $tipeDokSphKtp . "', '" . $created_date . "', NULL, '-')", $con);
+                }
                 if ($result == "") {
                     $result = "KTP sukses di upload";
                 } else {
                     $result = $result . ", KTP sukses di upload";
                 }
+                unlink($target_file_ktp);
             } else {
                 if ($result == "") {
                     $result = "KTP gagal di upload";
@@ -171,7 +204,7 @@ if (ftp_mkdir($conn, $dir_ftp) || !ftp_mkdir($conn, $dir_ftp)) {
             }
         } else {
             if ($result == "") {
-                $result = "KTP gagal di upload (local)";
+                $result = "KTP gagal di upload (local) " . $tipeDokSphKtp;
             } else {
                 $result = $result . ", KTP gagal di upload (local)";
             }
@@ -179,19 +212,30 @@ if (ftp_mkdir($conn, $dir_ftp) || !ftp_mkdir($conn, $dir_ftp)) {
     }
 
     if (!empty($_FILES['dok_slik']['tmp_name'])) {
-        if (move_uploaded_file($filenameDokSlik_temp, SITE_ROOT . $target_file_slik)) {
+        if (move_uploaded_file($filenameDokSlik_temp,  $target_file_slik)) {
             $upload = ftp_put($conn, $dir_ftp .  $targetfilenameSlik . ".pdf", "C:/xamppx/htdocs/" . $rootdir . "/modul/pengajuanclaim/upload/"
                 . $nomorRekening . "/" . $targetfilenameSlik . ".pdf", FTP_BINARY);
             if ($upload) {
+                $cekDokInfo =  mssql_query("SELECT * FROM askred_dokumen_info WHERE no_rekening_pinjaman='" . $nomorRekening . "' AND kode_dokumen = '" . $targetfilenameSlik . "'", $con);
+                $rcekDokInfo = mssql_fetch_array($cekDokInfo);
                 $created_date = date("Y-m-d H:i:s");
-                $sql = mssql_query("INSERT INTO askred_dokumen_info
+                if ($rcekDokInfo > 0) {
+
+                    $sql = mssql_query("UPDATE askred_dokumen_info
+                    SET modified_date='" . $created_date . "'
+                    WHERE no_rekening_pinjaman='" . $nomorRekening . "' AND kode_dokumen = 'slik' ;
+                    ", $con);
+                } else {
+                    $sql = mssql_query("INSERT INTO askred_dokumen_info
                                       (no_rekening_pinjaman, kode_dokumen, file_name, url_dokumen, path_local_dokumen, tipe_dokumen, created_date, modified_date, external_id)
                                        VALUES('" . $nomorRekening . "', 'slik', '" . $targetfilenameSlik . "', 'portal', '" . $dir_ftp .  $targetfilenameSlik . ".pdf" . "', 'pdf', '" . $created_date . "', NULL, '-')", $con);
+                }
                 if ($result == "") {
                     $result = "Dokumen SLIK sukses di upload";
                 } else {
                     $result = $result . ", Dokumen SLIK sukses di upload";
                 }
+                unlink($target_file_slik);
             } else {
                 if ($result == "") {
                     $result = "Dokumen SLIK gagal di upload";
@@ -209,19 +253,29 @@ if (ftp_mkdir($conn, $dir_ftp) || !ftp_mkdir($conn, $dir_ftp)) {
     }
 
     if (!empty($_FILES['dok_sku']['tmp_name'])) {
-        if (move_uploaded_file($filenameDokSku_temp, SITE_ROOT . $target_file_sku)) {
+        if (move_uploaded_file($filenameDokSku_temp, $target_file_sku)) {
             $upload = ftp_put($conn, $dir_ftp .  $targetfilenameSku . ".pdf", "C:/xamppx/htdocs/" . $rootdir . "/modul/pengajuanclaim/upload/"
                 . $nomorRekening . "/" . $targetfilenameSku . ".pdf", FTP_BINARY);
             if ($upload) {
+                $cekDokInfo =  mssql_query("SELECT * FROM askred_dokumen_info WHERE no_rekening_pinjaman='" . $nomorRekening . "' AND kode_dokumen = 'data_usaha'", $con);
+                $rcekDokInfo = mssql_fetch_array($cekDokInfo);
                 $created_date = date("Y-m-d H:i:s");
-                $sql = mssql_query("INSERT INTO askred_dokumen_info
+                if ($rcekDokInfo > 0) {
+                    $sql = mssql_query("UPDATE askred_dokumen_info
+                    SET modified_date='" . $created_date . "'
+                    WHERE no_rekening_pinjaman='" . $nomorRekening . "' AND kode_dokumen = 'data_usaha' ;
+                    ", $con);
+                } else {
+                    $sql = mssql_query("INSERT INTO askred_dokumen_info
                                       (no_rekening_pinjaman, kode_dokumen, file_name, url_dokumen, path_local_dokumen, tipe_dokumen, created_date, modified_date, external_id)
                                        VALUES('" . $nomorRekening . "', 'data_usaha', '" . $targetfilenameSku . "', 'portal', '" . $dir_ftp .  $targetfilenameSku . ".pdf" . "', 'pdf', '" . $created_date . "', NULL, '-')", $con);
+                }
                 if ($result == "") {
                     $result = "Dokumen SKU sukses di upload";
                 } else {
                     $result = $result . ", Dokumen SKU sukses di upload";
                 }
+                unlink($target_file_sku);
             } else {
                 if ($result == "") {
                     $result = "Dokumen SKU gagal di upload";
@@ -239,19 +293,29 @@ if (ftp_mkdir($conn, $dir_ftp) || !ftp_mkdir($conn, $dir_ftp)) {
     }
 
     if (!empty($_FILES['dok_rc']['tmp_name'])) {
-        if (move_uploaded_file($filenameDokRC_temp, SITE_ROOT . $target_file_rc)) {
+        if (move_uploaded_file($filenameDokRC_temp,  $target_file_rc)) {
             $upload = ftp_put($conn, $dir_ftp .  $targetfilenameRc . ".pdf", "C:/xamppx/htdocs/" . $rootdir . "/modul/pengajuanclaim/upload/"
                 . $nomorRekening . "/" . $targetfilenameRc . ".pdf", FTP_BINARY);
             if ($upload) {
+                $cekDokInfo =  mssql_query("SELECT * FROM askred_dokumen_info WHERE no_rekening_pinjaman='" . $nomorRekening . "' AND kode_dokumen = '" . $targetfilenameRc . "'", $con);
+                $rcekDokInfo = mssql_fetch_array($cekDokInfo);
                 $created_date = date("Y-m-d H:i:s");
-                $sql = mssql_query("INSERT INTO askred_dokumen_info
+                if ($rcekDokInfo > 0) {
+                    $sql = mssql_query("UPDATE askred_dokumen_info
+                    SET modified_date='" . $created_date . "'
+                    WHERE no_rekening_pinjaman='" . $nomorRekening . "' AND kode_dokumen = 'rc' ;
+                    ", $con);
+                } else {
+                    $sql = mssql_query("INSERT INTO askred_dokumen_info
                                       (no_rekening_pinjaman, kode_dokumen, file_name, url_dokumen, path_local_dokumen, tipe_dokumen, created_date, modified_date, external_id)
                                        VALUES('" . $nomorRekening . "', 'rc', '" . $targetfilenameRc . "', 'portal', '" . $dir_ftp .  $targetfilenameRc . ".pdf" . "', 'pdf', '" . $created_date . "', NULL, '-')", $con);
+                }
                 if ($result == "") {
                     $result = "Dokumen RC sukses di upload";
                 } else {
                     $result = $result . ", Dokumen RC sukses di upload";
                 }
+                unlink($target_file_rc);
             } else {
                 if ($result == "") {
                     $result = "Dokumen RC gagal di upload";
@@ -269,19 +333,30 @@ if (ftp_mkdir($conn, $dir_ftp) || !ftp_mkdir($conn, $dir_ftp)) {
     }
 
     if (!empty($_FILES['dok_additional']['tmp_name'])) {
-        if (move_uploaded_file($filenameDokAdditional_temp, SITE_ROOT . $target_file_additional)) {
-            $upload = ftp_put($conn, $dir_ftp .  $targetfilenameAdditional . ".pdf", "C:/xamppx/htdocs/" . $rootdir . "/modul/pengajuanclaim/upload/"
-                . $nomorRekening . "/" . $targetfilenameAdditional . ".pdf", FTP_BINARY);
+        if (move_uploaded_file($filenameDokAdditional_temp, $target_file_additional)) {
+            $upload = ftp_put($conn, $dir_ftp .  $filenameDokAdditional . ".pdf", "C:/xamppx/htdocs/" . $rootdir . "/modul/pengajuanclaim/upload/"
+                . $nomorRekening . "/" . $filenameDokAdditional . ".pdf", FTP_BINARY);
             if ($upload) {
+                $cekDokInfo =  mssql_query("SELECT * FROM askred_dokumen_info WHERE no_rekening_pinjaman='" . $nomorRekening . "' AND kode_dokumen = 'additional'", $con);
+                $rcekDokInfo = mssql_fetch_array($cekDokInfo);
+
                 $created_date = date("Y-m-d H:i:s");
-                $sql = mssql_query("INSERT INTO askred_dokumen_info
-                                      (no_rekening_pinjaman, kode_dokumen, file_name, url_dokumen, path_local_dokumen, tipe_dokumen, created_date, modified_date, external_id)
-                                       VALUES('" . $nomorRekening . "', 'additional', '" . $targetfilenameAdditional . "', 'portal', '" . $dir_ftp .  $targetfilenameAdditional . ".pdf" . "', 'pdf', '" . $created_date . "', NULL, '-')", $con);
-                if ($result == "") {
-                    $result = "Dokumen " . $targetfilenameAdditional . " sukses di upload";
+                if ($rcekDokInfo > 0) {
+                    $sql = mssql_query("UPDATE askred_dokumen_info
+                    SET modified_date='" . $created_date . "', file_name = '" . $filenameDokAdditional . "', path_local_dokumen = '" . $dir_ftp .  $filenameDokAdditional . ".pdf" . "', 
+                    url_dokumen = 'portal/" . $targetfilenameAdditional . "'
+                    WHERE no_rekening_pinjaman='" . $nomorRekening . "' AND kode_dokumen = 'additional'", $con);
                 } else {
-                    $result = $result . ", Dokumen " . $targetfilenameAdditional . " sukses di upload";
+                    $sql = mssql_query("INSERT INTO askred_dokumen_info
+                                      (no_rekening_pinjaman, kode_dokumen, file_name, url_dokumen, path_local_dokumen, tipe_dokumen, created_date, modified_date, external_id)
+                                       VALUES('" . $nomorRekening . "', 'additional', '" . $filenameDokAdditional . "', 'portal/" . $targetfilenameAdditional . "', '" . $dir_ftp .  $filenameDokAdditional . "', 'pdf', '" . $created_date . "', NULL, '-')", $con);
                 }
+                if ($result == "") {
+                    $result = "Dokumen " . $targetfilenameAdditional . " sukses di uploadssss" . "";
+                } else {
+                    $result = $result . ", Dokumen " . $targetfilenameAdditional . " sukses di uploadssss";
+                }
+                unlink($target_file_additional);
             } else {
                 if ($result == "") {
                     $result = "Dokumen " . $targetfilenameAdditional . " gagal di upload";
@@ -297,6 +372,7 @@ if (ftp_mkdir($conn, $dir_ftp) || !ftp_mkdir($conn, $dir_ftp)) {
             }
         }
     }
+
     // echo $result;
     echo "<script>
             alert('" . $result . "');
@@ -304,9 +380,6 @@ if (ftp_mkdir($conn, $dir_ftp) || !ftp_mkdir($conn, $dir_ftp)) {
     echo "<script>window.location.href='http://10.10.1.247:81/" . $rootdir . "/media.php?module=klaim&q=0&title=Belum%20Diverifikasi'</script>";
     // exit;
 }
-
-
-
 
 
 
