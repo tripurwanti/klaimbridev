@@ -5,7 +5,8 @@ $q  = mssql_query("SELECT * FROM askred_dokumen_info WHERE no_rekening_pinjaman 
 $dq = mssql_fetch_array($q);
 $file = $dq['file_name'] . "." . $dq['tipe_dokumen'];
 // Initialize a file URL to the variable
-$url = '10.20.10.16:8081/api/claim/downloadDigitalDocument/' . $_GET[no_rek] . '/' . $file;
+$filetemp = str_replace(" ", "%20", $file);
+$url = '10.20.10.16:8081/api/claim/downloadDigitalDocument/' . $_GET[no_rek] . '/' . $filetemp;
 $headers = array(
     "Content-Type: application/force-download" // or whatever you want
 );
