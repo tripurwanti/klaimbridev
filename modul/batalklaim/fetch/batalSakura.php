@@ -5,7 +5,7 @@ $rootdir = "klaimbridevwanti/klaimbridev";
 $msg = '';
 $noRekening = $_REQUEST['noRekening'];
 $ketTolak = $_REQUEST['ketTolak'];
-$noPolis = $_REQUEST['noPolis'];
+$noKlaim = $_REQUEST['noKlaim'];
 // echo $ketTolak;
 $isKolek = false;
 $status_batal = '2';
@@ -21,9 +21,8 @@ $url = 'http://10.20.10.5:8081/api/op/klaim/cancel';
 $curl = curl_init();
 curl_setopt($curl, CURLOPT_POST, 1);
 $data = array(
+    'noKlaim' => $noKlaim,
     'noRekening' => $noRekening,
-    'noPolis' => $noPolis,
-    'idTgr' => '',
     'reason' => $ketTolak,
     'perbaikanKolek' => $isKolek
 );
@@ -46,10 +45,10 @@ if (!$resultcurl) {
 $response = json_decode($resultcurl, true);
 // var_dump($response);
 // echo $response["status"];
-
+$msgresponse = $response["message"];
 if ($response["status"] == '01') {
     $status_batal = '2';
-    $msg = 'Rehit batal klaim ke sakura gagal. Hubungi administrator.';
+    $msg = 'Rehit batal klaim ke sakura gagal.' . $msgresponse . '.  Hubungi administrator.';
 } else if ($response["status"] == '00') {
     $status_batal = '1';
     $msg = 'Rehit batal klaim ke sakura  berhasil.';

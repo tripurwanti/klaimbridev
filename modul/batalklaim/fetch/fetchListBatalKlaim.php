@@ -4,7 +4,7 @@ error_reporting(1);
 include "../../../config/koneksi.php";
 session_start();
 
-$q = mssql_query("SELECT a.*, b.* ,c.* ,
+$q = mssql_query("SELECT a.id as id_pengajuan_history, a.*, b.* ,c.* ,
 (SELECT TOP 1 b.nama_debitur FROM sp2_kur2015 b WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = b.no_rekening collate SQL_Latin1_General_CP1_CI_AS) AS nama_debitur,
 (SELECT TOP 1 d.nama_debitur FROM pengajuan_spr_kur_gen2 c, sp2_kur2015 d WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = c.no_rek_suplesi collate SQL_Latin1_General_CP1_CI_AS AND d.no_rekening collate SQL_Latin1_General_CP1_CI_AS = c.no_rekening collate SQL_Latin1_General_CP1_CI_AS) AS nama_debitur_spr,
 (SELECT TOP 1 e.nama FROM mapping_bank_bri e, sp2_kur2015 f WHERE e.kode_uker_bank collate SQL_Latin1_General_CP1_CI_AS = f.kode_uker AND a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = f.no_rekening collate SQL_Latin1_General_CP1_CI_AS ) AS kode_uker,
@@ -21,18 +21,22 @@ $data = array();
 $i = 1;
 
 while ($row = mssql_fetch_array($q)) {
+    $idPengajuanHistory = $row['id_pengajuan_history'];
     $noRekening = $row['no_rekening'];
-    $noSertifikat = $row['no_sertifikat'];
+    $noKlaim = $row['no_klaim'];
     $ketTolak = $row['ket_tolak'];
     $sub_array = array();
-
     $sub_array[] = $i;
     if ($row['status_batal'] == 2) {
-        // $sub_array[] = "<button alt='Lihat Dokumen' type='button' class='btn btn-success btn-small' data-toggle='modal' data-target='#myModal' data-whatever='$_POST[q]&no_fasilitas=$row[no_rekening]&plafond=$row[jml_baki_debet]&tgl_mulai=$row[tgl_mulai]&jml_tuntutan=$row[jml_tuntutan]&sumberklaim=$row[claim_source]'><i class='fa fa-arrow-up' aria-hidden='true'></i> </button>";
-        $sub_array[] = "<a href='modul/batalklaim/fetch/batalSakura.php?noRekening=$noRekening&noPolis=$noSertifikat&ketTolak=$ketTolak'><i class='fa fa-arrow-up' aria-hidden='true'></i> </a>";
-    } else {
-        $sub_array[] = '';
+        $sub_array[] = "<a href='modul/batalklaim/fetch/batalSakura.php?noRekening=$noRekening&noKlaim=$noKlaim&ketTolak=$ketTolak'><i class='fa fa-arrow-up' aria-hidden='true'></i> </a>";
+    } else if ($row['status_batal'] == 1) {
+        $sub_array[] = "<a href='modul/batalklaim/fetch/downloadBuktiPengembalianDana.php?id=$idPengajuanHistory'><i class='fa fa-eye' aria-hidden='true'></i> </a>";
+    } else if ($row['status_dana'] == 1) {
+        $sub_array[] = "<a href='modul/batalklaim/fetch/downloadBuktiPengembalianDana.php?id=$idPengajuanHistory'><i class='fa fa-eye' aria-hidden='true'></i> </a>";
+    } else if ($row['status_dana'] == null && $row['status_batal'] == 2) {
+        $sub_array[] = "<a href='modul/batalklaim/fetch/batalSakura.php?noRekening=$noRekening&noKlaim=$noKlaim&ketTolak=$ketTolak'><i class='fa fa-arrow-up' aria-hidden='true'></i> </a>";
     }
+
 
     if ($row['status_batal'] == 1) {
         $sub_array[] = 'Berhasil Batal Klaim';
