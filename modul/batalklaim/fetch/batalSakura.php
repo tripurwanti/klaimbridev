@@ -52,6 +52,8 @@ if ($response["status"] == '01') {
 } else if ($response["status"] == '00') {
     $status_batal = '1';
     $msg = 'Rehit batal klaim ke sakura  berhasil.';
+} else {
+    $msg = $response['error'];
 }
 
 $q = mssql_query("UPDATE pengajuan_klaim_kur_gen2_history SET status_batal = $status_batal,  update_date = '$updateDate' WHERE no_rekening = $noRekening");
