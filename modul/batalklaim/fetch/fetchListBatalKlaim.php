@@ -29,12 +29,12 @@ while ($row = mssql_fetch_array($q)) {
     $sub_array[] = $i;
     if ($row['status_batal'] == 2) {
         $sub_array[] = "<a href='modul/batalklaim/fetch/batalSakura.php?noRekening=$noRekening&noKlaim=$noKlaim&ketTolak=$ketTolak'><i class='fa fa-arrow-up' aria-hidden='true'></i> </a>";
-    } else if ($row['status_batal'] == 1) {
+    } else if ($row['status_batal'] == 1 && $row['status_dana'] == 1) {
         $sub_array[] = "<a href='modul/batalklaim/fetch/downloadBuktiPengembalianDana.php?id=$idPengajuanHistory'><i class='fa fa-eye' aria-hidden='true'></i> </a>";
-    } else if ($row['status_dana'] == 1) {
-        $sub_array[] = "<a href='modul/batalklaim/fetch/downloadBuktiPengembalianDana.php?id=$idPengajuanHistory'><i class='fa fa-eye' aria-hidden='true'></i> </a>";
-    } else if ($row['status_dana'] == null && $row['status_batal'] == 2) {
+    } else if (($row['status_dana'] == null || $row['status_dana'] == 0) && $row['status_batal'] == 2) {
         $sub_array[] = "<a href='modul/batalklaim/fetch/batalSakura.php?noRekening=$noRekening&noKlaim=$noKlaim&ketTolak=$ketTolak'><i class='fa fa-arrow-up' aria-hidden='true'></i> </a>";
+    } else if (($row['status_dana'] == null || $row['status_dana'] == 0) && $row['status_batal'] == 1) {
+        $sub_array[] = "";
     }
 
 
