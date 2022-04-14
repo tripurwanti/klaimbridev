@@ -1,0 +1,32 @@
+remote kalimbridev
+
+\\10.10.1.247\c$\xamppx\htdocs\klaimbridev
+
+PORTAL KLAIM BRI
+================
+
+Prod URL= 10.10.1.247:81/klaimbri
+Dev URL= 10.10.1.247:81/klaimbridev
+
+Windows Server
+--------------
+IP: 10.10.1.247
+User/Pass: Administrator/c9p@)5BtqU
+
+Source App Prod: C:\\xamppx\htdocs\klaimbri
+Source App Dev: C:\\xamppx\htdocs\klaimbridev
+
+DB Server
+---------
+IP: 10.20.10.16
+User/Pass: askrindo/p@ssw0rd
+DBName Prod: aos_kur_bri
+       Dev: aos_kur_bri_dev
+
+SERVER BRI
+Windows Server 
+IP: 10.20.10.16
+user/pass: administrator/askrindo.2017
+
+
+\\10.20.10.16\c$\xampp\htdocs\klaimbridev
