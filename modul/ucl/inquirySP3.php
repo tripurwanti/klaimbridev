@@ -31,41 +31,76 @@ error_reporting(1);
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">First</th>
-                            <th scope="col">Last</th>
-                            <th scope="col">Handle</th>
+                            <th>No PP</th>
+                            <th>Nomor Perjanjian</th>
+                            <th>Nama Proyek</th>
+                            <th>Jenis BG</th>
+                            <th>Nama Principal</th>
+                            <th>Alamat Principal</th>
+                            <th>Nama Obligee</th>
+                            <th>Alamat Obligee</th>
+                            <th>Mata Uang</th>
+                            <th>Nilai Proyek</th>
+                            <th>Nilai Penjaminan</th>
+                            <th>Tanggal Awal</th>
+                            <th>Tanggal Akhir</th>
+                            <th>Download PP / SP3</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>Mark</td>
-                            <td>Otto</td>
-                            <td>@mdo</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>Jacob</td>
-                            <td>Thornton</td>
-                            <td>@fat</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">3</th>
-                            <td>Larry</td>
-                            <td>the Bird</td>
-                            <td>@twitter</td>
-                        </tr>
+                    <tbody id="table-content">
                     </tbody>
                 </table>
             </div>
+            <div id="table"></div>
         </div>
     </div>
 </div>
 
 <script>
+    function bookingUCL(noPP) {
+        window.swal({
+            title: "Checking...",
+            text: "Please wait",
+            showConfirmButton: false,
+            allowOutsideClick: false
+        });
+        $.ajax({
+            url: "modul/ucl/controller/bookingUCL.php",
+            type: "POST",
+            data: {
+                noPP: noPP
+            },
+            success: function(response) {
+                var resp = JSON.parse(response);
+                console.log("respnya: ", resp);
+                if (resp['code'] == "200") {
+                    Swal.fire({
+                        title: "Sukses",
+                        text: "Booking berhasil. Silahkan lakukan penerbitan PP di ACS",
+                        icon: "success",
+                        timer: 5000,
+                        timerProgressBar: true,
+                    })
+                } else if (resp['code'] == "409") {
+                    window.swal({
+                        title: resp['response'],
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                } else {
+                    window.swal({
+                        title: "Data tidak ditemukan!",
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                }
+            }
+        })
+    }
+</script>
+<script>
     $(document).ready(function() {
-
         $("form").submit(function(e) {
             e.preventDefault();
             var noPP = $("#noPP").val();
@@ -82,21 +117,37 @@ error_reporting(1);
                     noPP: noPP
                 },
                 success: function(response) {
-                    $("#table").html("<b>Table disini ya</b>");
-
-                    console.log("responseonya: " + response);
-                    if (response == "200") {
-                        Swal.fire({
-                            title: "Sukses",
-                            text: "Booking berhasil. Silahkan lakukan penerbitan PP di ACS",
-                            icon: "success",
-                            timer: 5000,
-                            timerProgressBar: true,
-                        })
-                        $("#table").html("<b>Table disini ya</b>");
+                    var resp = JSON.parse(response);
+                    if (resp['code'] == "200") {
+                        Swal.close();
+                        // Swal.fire({
+                        //     title: "Sukses",
+                        //     text: "Booking berhasil. Silahkan lakukan penerbitan PP di ACS",
+                        //     icon: "success",
+                        //     timer: 5000,
+                        //     timerProgressBar: true,
+                        // })
+                        console.log(resp);
+                        $("#table-content").html("<tr>" +
+                            "<td>" + resp['response']['noPP'] + "</td>" +
+                            "<td>" + resp['response']['noPerjanjian'] + "</td>" +
+                            "<td>" + resp['response']['namaProyek'] + "</td>" +
+                            "<td>" + resp['response']['jenisBg'] + "</td>" +
+                            "<td>" + resp['response']['namaPrincipal'] + "</td>" +
+                            "<td>" + resp['response']['alamatPrincipal'] + "</td>" +
+                            "<td>" + resp['response']['namaObligee'] + "</td>" +
+                            "<td>" + resp['response']['alamatObligee'] + "</td>" +
+                            "<td>" + resp['response']['mataUang'] + "</td>" +
+                            "<td>" + resp['response']['nilaiProyek'] + "</td>" +
+                            "<td>" + resp['response']['nilaiPenjaminan'] + "</td>" +
+                            "<td>" + resp['response']['tglAwal'] + "</td>" +
+                            "<td>" + resp['response']['endDate'] + "</td>" +
+                            "<td><a href='#' class='btn btn-primary'>Download</a></td>" +
+                            "<td><a href='#' onclick=bookingUCL('" + resp['response']['noPP'] + "') class='btn btn-success'>Booking UCL</a></td>" +
+                            "</tr>");
                     } else {
                         window.swal({
-                            title: "Error!",
+                            title: "Data tidak ditemukan!",
                             showConfirmButton: false,
                             timer: 1000
                         });

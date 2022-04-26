@@ -5,7 +5,7 @@ class Ucl
 
     private $_url = "localhost:8081/api";
 
-    function curl($payloadBody, $endPoint)
+    function curl($payloadBody, $endPoint,  $method)
     {
 
         $curl = curl_init();
@@ -15,7 +15,7 @@ class Ucl
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "GET",
+            CURLOPT_CUSTOMREQUEST => $method,
             CURLOPT_HTTPHEADER => array(
                 "cache-control: no-cache"
             ),

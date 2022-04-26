@@ -12,10 +12,10 @@ function setResponse($code, $response)
 }
 
 $noPP = $_POST['noPP'];
-$response = $ucl->curl(null, "/ucl/inquirySP3?noSP3=" . $noPP, "GET");
+$response = $ucl->curl(null, "/ucl/bookingUCL?noSP3=" . $noPP, "POST");
 $json = json_decode($response);
 if ($json->responseStatus == 1) {
-    echo json_encode(setResponse("200", $json->responseObject));
+    echo json_encode(setResponse($json->responseCode, $json->responseObject));
 } else {
-    echo json_encode(setResponse("400", null));
+    echo json_encode(setResponse($json->responseCode, $json->responseMessage));
 }
