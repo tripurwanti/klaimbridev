@@ -34,7 +34,7 @@ error_reporting(1);
                             <th>No PP</th>
                             <th>Nomor Perjanjian</th>
                             <th>Nama Proyek</th>
-                            <th>Jenis BG</th>
+                            <th>Jenis Bank Garansi</th>
                             <th>Nama Principal</th>
                             <th>Alamat Principal</th>
                             <th>Nama Obligee</th>
@@ -45,7 +45,7 @@ error_reporting(1);
                             <th>Tanggal Awal</th>
                             <th>Tanggal Akhir</th>
                             <th>Download PP / SP3</th>
-                            <th>Action</th>
+                            <th>Booking UCL</th>
                         </tr>
                     </thead>
                     <tbody id="table-content">

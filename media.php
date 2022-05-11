@@ -374,8 +374,8 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                                             class="fa fa-list nav_icon"></i>Penolakan Subrogasi</a>
                                 </li> -->
                                         <li>
-                                        <a href="media.php?module=monitoringUCL"><i class="fa fa-upload nav_icon"></i>Monitoring UCL</a>
-                                        <a href="media.php?module=inquirySP3"><i class="fa fa-upload nav_icon"></i>Inquiry Data SP3</a>
+                                        <a href="media.php?module=inquirySP3"><i class="fa fa-upload nav_icon"></i>UCL Booking</a>
+                                        <a href="media.php?module=monitoringUCL"><i class="fa fa-upload nav_icon"></i>Monitoring Bank Garansi</a>
                                         </li>
                                     </ul>
                                 </li>

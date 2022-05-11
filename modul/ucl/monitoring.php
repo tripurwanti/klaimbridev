@@ -1,50 +1,49 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.js"></script>
 <?php
 error_reporting(1);
-// include "modul/subrogasi/upload_rc.php";
 ?>
 <div id="page-wrapper">
     <div class="main-page">
-        <h3 class="title1">Monitoring UCL</h3>
+        <h3 class="title1">Monitoring Bank Garansi</h3>
         <div class="tables">
             <div class="bs-example widget-shadow" data-example-id="hoverable-table">
-                <div class="container">
-                    <div class="column">
-                        <div class="col-md-8">
-                            <form action="modul/claim/upload_rc_claim.php" method="post" enctype="multipart/form-data">
-                                <!-- <form action="media.php?module=doSubroUploadRC" method="post" enctype="multipart/form-data"> -->
-                                Pilih file RC:
-                                <br>
-                                <div class="input-group-sm col-md-6">
-                                    <input type="file" [accept]="accept" name="fileToUpload" id="fileToUpload"
-                                        (change)="processFile(imageInput)" class="form-control">
-                                </div>
-                                <div class="input-group-append col-md-2" style="margin-left: -20px; margin-top: 3px;">
-                                    <select name="bank">
-                                        <option value="BRI">Bank BRI</option>
-                                        <!-- <option value="Mandiri">Bank Mandiri</option>
-											<option value="BNI">Bank BNI</option>
-											<option value="BTN">Bank BTN</option> -->
-                                    </select>
-                                </div>
-                                <div class="input-group-append col-md-2">
-                                    <button type="submit" value="submit" name="submit"
-                                        class="btn btn-outline-success btn-sm" data-toggle="tooltip"
-                                        data-placement="bottom" title="Upload"><i class="fa fa-upload"></i></button>
-                                </div>
-                        </div>
-                        </form>
-                    </div>
-
-                    <div class="col-md-4">
-                        <form action="config/download_template_RC.php" method="post">
-                            Download template Excel
-                            <br>
-                            <input class="btn" type="submit" name="submit" value="Download File" />
-                        </form>
-                    </div>
-                </div>
             </div>
+            <div class="bs-example widget-shadow" data-example-id="hoverable-table">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Status</th>
+                            <th>Detail</th>
+                            <th>No PP</th>
+                            <th>Nomor Perjanjian</th>
+                            <th>Nama Proyek</th>
+                            <th>Jenis Bank Garansi</th>
+                            <th>Nama Principal</th>
+                            <th>Alamat Principal</th>
+                            <th>Nama Obligee</th>
+                            <th>Alamat Obligee</th>
+                            <th>Mata Uang</th>
+                            <th>Nilai Proyek</th>
+                            <th>Nilai Penjaminan</th>
+                            <th>Tanggal Awal</th>
+                            <th>Tanggal Akhir</th>
+                            <th>Download PP / SP3</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-content">
+                    </tbody>
+                </table>
+            </div>
+            <div id="table"></div>
         </div>
     </div>
 </div>
-</div>
+
+<script>
+</script>
+<script>
+    $(document).ready(function() {
+        
+    });
+</script>
