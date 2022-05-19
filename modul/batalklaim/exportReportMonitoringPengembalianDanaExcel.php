@@ -22,13 +22,12 @@ $dataBatalKlaim = mssql_query("SELECT j.*,  k.* ,(SELECT TOP 1 b.nama_debitur FR
   INNER JOIN pengembalian_dana_batch k ON a.batch_id = k.batch_id ", $con);
 
 
-$rDataBatalKlaim = mssql_num_rows($dataBatalKlaim);
-if ($rDataBatalKlaim <= 0) {
-    echo "hehe";
-    echo '<script language="javascript">
-    Swal.fire("Any fool can use a computer")
-    </script>';
-} else {
+// $rDataBatalKlaim = mssql_num_rows($dataBatalKlaim);
+// if ($rDataBatalKlaim <= 0) {
+//     echo '<script language="javascript">
+//     Swal.fire("Any fool can use a computer")
+//     </script>';
+// } else {
 
 ?>
 <html>
@@ -65,9 +64,9 @@ if ($rDataBatalKlaim <= 0) {
     </style>
     <?php
 
-        header("Content-type: application/vnd-ms-excel");
-        header("Content-Disposition: attachment; filename=bri_cms.xls");
-        ?>
+    header("Content-type: application/vnd-ms-excel");
+    header("Content-Disposition: attachment; filename=bri_cms.xls");
+    ?>
 
     <center>
         <table>
@@ -111,16 +110,16 @@ if ($rDataBatalKlaim <= 0) {
             <th style="color : red; font-weight: bold;">Ref Number</th>
         </tr>
         <?php
-            $no = 1;
-            $totalNominalClaim = 0;
-            while ($dq = mssql_fetch_array($dataBatalKlaim)) {
-                $nopes = $dq['no_rekening'];
-                $query = "";
-                $getRemark = mssql_query("SELECT remark FROM askred_claim_confirmation WHERE nomor_peserta = '$nopes'",  $con3);
-                $dGetRemark = mssql_fetch_array($getRemark);
-                $remark = $dGetRemark['remark'];
+        $no = 1;
+        $totalNominalClaim = 0;
+        while ($dq = mssql_fetch_array($dataBatalKlaim)) {
+            $nopes = $dq['no_rekening'];
+            $query = "";
+            $getRemark = mssql_query("SELECT remark FROM askred_claim_confirmation WHERE nomor_peserta = '$nopes'",  $con3);
+            $dGetRemark = mssql_fetch_array($getRemark);
+            $remark = $dGetRemark['remark'];
 
-            ?>
+        ?>
         <tr>
             <th scope="row">
                 <?php echo $no; ?>
@@ -128,12 +127,12 @@ if ($rDataBatalKlaim <= 0) {
             <td>04720743463436</td>
             <td><?php echo $dq['no_rekening']; ?></td>
             <td><?php
-                        if ($dq['nama_debitur_spr'] == null) {
-                            echo $dq['nama_debitur'];
-                        } else {
-                            echo $dq['nama_debitur_spr'];
-                        }
-                        ?></td>
+                    if ($dq['nama_debitur_spr'] == null) {
+                        echo $dq['nama_debitur'];
+                    } else {
+                        echo $dq['nama_debitur_spr'];
+                    }
+                    ?></td>
             <td></td>
             <td><?php echo $dq['jml_net_klaim']; ?></td>
             <td>IDR</td>
@@ -145,10 +144,10 @@ if ($rDataBatalKlaim <= 0) {
         </tr>
 
         <?php
-                $no++;
-                $totalNominalClaim = $totalNominalClaim + $dq['jml_net_klaim'];
-            }
-            ?>
+            $no++;
+            $totalNominalClaim = $totalNominalClaim + $dq['jml_net_klaim'];
+        }
+        ?>
         <tr>
             <td style="color : red; font-weight: bold;">COUNT</td>
             <td style="font-weight: bold;"><?php echo $no - 1; ?></td>
@@ -167,7 +166,7 @@ if ($rDataBatalKlaim <= 0) {
     </table>
 
     <?php
-}
+    // }
     ?>
 </body>
 
