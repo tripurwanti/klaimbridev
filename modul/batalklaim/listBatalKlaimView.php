@@ -32,7 +32,7 @@
             <div class="modal-body" style="overflow-y: auto;">
                 <!-- <p>Loading...</p> -->
                 <table class="table">
-                    <form action="modul/batalklaim/exportPengembalianDanaExcel.php" method="post"
+                    <form action="modul/batalklaim/exportReportPermintaanPengembalianDanaExcel.php" method="post"
                         onreset="resetHandler();">
 
                         <td>
@@ -74,12 +74,13 @@
 function validate_fileupload(input_element) {
     var startDate = new Date($('#start_date').val());
     var endDate = new Date($('#end_date').val());
+
     if (startDate > endDate) {
         document.getElementById("msgerrorstartdate").innerHTML = "Tanggal awal tidak boleh melebihi Tanggal Akhir";
-        document.getElementById("downloadButton").disabled = false;
+        document.getElementById("downloadButton").disabled = true;
     } else {
         document.getElementById("msgerrorstartdate").innerHTML = "";
-        document.getElementById("downloadButton").disabled = true;
+        document.getElementById("downloadButton").disabled = false;
     }
 
 }

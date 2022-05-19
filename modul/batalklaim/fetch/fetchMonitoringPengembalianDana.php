@@ -24,7 +24,7 @@ while ($row = mssql_fetch_array($q)) {
     $sub_array = array();
 
     $sub_array[] = $i;
-    $sub_array[] = "";
+    $sub_array[] = $row['no_rekening'];
     $sub_array[] = $row['batch_id'];
     if ($row['status_batal'] == 1) {
         $sub_array[] = 'Berhasil Batal Klaim';
