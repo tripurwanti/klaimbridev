@@ -1,5 +1,5 @@
 <?php
-$server     = "10.20.10.167";
+$server     = "10.20.10.169";
 $user         = "askrindo";
 $password     = "p@ssw0rd";
 $database     = "aos_kur_bri_dev";

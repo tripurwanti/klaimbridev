@@ -3,7 +3,7 @@ include '../../config/koneksi.php';
 include '../../config/excel_reader2.php';
 include '../../config/SpreadsheetReader.php';
 
-$server3 = "10.20.10.167";
+$server3 = "10.20.10.169";
 $username3 = "askrindo";
 $password3 = "p@ssw0rd";
 $database3 = "ASKRINDO_BRI_DEV";

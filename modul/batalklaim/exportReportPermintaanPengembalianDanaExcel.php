@@ -14,19 +14,22 @@ $date2 = date('d/m/Y', strtotime($createDate));
 $roodirarr = explode("/", $_SERVER['REQUEST_URI']);
 $rootdir = $roodirarr[1];
 $server = $_SERVER['SERVER_NAME'];
+$query = "SELECT a.*, j.*, l.kantor , k.* ,(SELECT TOP 1 b.nama_debitur FROM sp2_kur2015 b WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = b.no_rekening collate SQL_Latin1_General_CP1_CI_AS) AS nama_debitur,
+(SELECT TOP 1 m.tanggal_sertifikat FROM sertifikat_kur m WHERE a.no_sertifikat collate SQL_Latin1_General_CP1_CI_AS = m.no_sertifikat collate SQL_Latin1_General_CP1_CI_AS) AS tanggal_sertifikat_kur ,
+(SELECT TOP 1 n.tanggal_sertifikat FROM sertifikat_kur_spr n WHERE a.no_sertifikat collate SQL_Latin1_General_CP1_CI_AS = n.no_sertifikat collate SQL_Latin1_General_CP1_CI_AS) AS tanggal_sertifikat_kur_spr,
+(SELECT TOP 1 d.nama_debitur FROM pengajuan_spr_kur_gen2 c, sp2_kur2015 d WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = c.no_rek_suplesi collate SQL_Latin1_General_CP1_CI_AS AND d.no_rekening collate SQL_Latin1_General_CP1_CI_AS = c.no_rekening collate SQL_Latin1_General_CP1_CI_AS) AS nama_debitur_spr,
+(SELECT TOP 1 e.nama FROM mapping_bank_bri e, sp2_kur2015 f WHERE e.kode_uker_bank collate SQL_Latin1_General_CP1_CI_AS = f.kode_uker AND a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = f.no_rekening collate SQL_Latin1_General_CP1_CI_AS ) AS kode_uker,
+(SELECT TOP 1 g.nama FROM mapping_bank_bri g, sp2_kur2015 h, pengajuan_spr_kur_gen2 i WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = i.no_rek_suplesi collate SQL_Latin1_General_CP1_CI_AS 
+AND h.no_rekening collate SQL_Latin1_General_CP1_CI_AS = i.no_rekening collate SQL_Latin1_General_CP1_CI_AS
+AND g.kode_uker_bank collate SQL_Latin1_General_CP1_CI_AS = h.kode_uker collate SQL_Latin1_General_CP1_CI_AS) AS kode_uker_spr 
+FROM pengajuan_klaim_kur_gen2_history a INNER JOIN jawaban_klaim_kur_gen2_history j ON a.id = j.id_pengajuan_history 
+LEFT JOIN pengembalian_dana_batch k ON a.batch_id = k.batch_id 
+INNER JOIN r_kantor l ON substring(a.no_sertifikat, 4, 2) = l.id_kantor AND
+CONVERT(varchar, a.history_create_date , 111) 
+BETWEEN '$startDate' AND '$endDate' 
+AND a.status_batal = '1' AND a.batch_id is null";
 
-$dataBatalKlaim = mssql_query("SELECT a.*, j.*, l.kantor , k.* ,(SELECT TOP 1 b.nama_debitur FROM sp2_kur2015 b WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = b.no_rekening collate SQL_Latin1_General_CP1_CI_AS) AS nama_debitur,
-                    (SELECT TOP 1 d.nama_debitur FROM pengajuan_spr_kur_gen2 c, sp2_kur2015 d WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = c.no_rek_suplesi collate SQL_Latin1_General_CP1_CI_AS AND d.no_rekening collate SQL_Latin1_General_CP1_CI_AS = c.no_rekening collate SQL_Latin1_General_CP1_CI_AS) AS nama_debitur_spr,
-                    (SELECT TOP 1 e.nama FROM mapping_bank_bri e, sp2_kur2015 f WHERE e.kode_uker_bank collate SQL_Latin1_General_CP1_CI_AS = f.kode_uker AND a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = f.no_rekening collate SQL_Latin1_General_CP1_CI_AS ) AS kode_uker,
-                    (SELECT TOP 1 g.nama FROM mapping_bank_bri g, sp2_kur2015 h, pengajuan_spr_kur_gen2 i WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = i.no_rek_suplesi collate SQL_Latin1_General_CP1_CI_AS 
-                    AND h.no_rekening collate SQL_Latin1_General_CP1_CI_AS = i.no_rekening collate SQL_Latin1_General_CP1_CI_AS
-                    AND g.kode_uker_bank collate SQL_Latin1_General_CP1_CI_AS = h.kode_uker collate SQL_Latin1_General_CP1_CI_AS) AS kode_uker_spr 
-                    FROM pengajuan_klaim_kur_gen2_history a INNER JOIN jawaban_klaim_kur_gen2_history j ON a.id = j.id_pengajuan_history 
-                    LEFT JOIN pengembalian_dana_batch k ON a.batch_id = k.batch_id 
-                    INNER JOIN r_kantor l ON substring(a.no_sertifikat, 4, 2) = l.id_kantor AND
-                    CONVERT(varchar, a.history_create_date , 111) 
-                    BETWEEN '$startDate' AND '$endDate' 
-                    AND a.status_batal = '1' AND a.batch_id is null");
+$dataBatalKlaim = mssql_query($query);
 
 $rDataBatalKlaim = mssql_num_rows($dataBatalKlaim);
 if ($rDataBatalKlaim <= 0) {
@@ -88,6 +91,8 @@ if ($rDataBatalKlaim <= 0) {
 
         header("Content-type: application/vnd-ms-excel");
         header("Content-Disposition: attachment; filename=bri_batal_klaim_$batchId.xls");
+
+        // header("Content-Disposition: attachment; filename=bri_batal_klaim.xls");
         ?>
 
     <center>
@@ -101,7 +106,8 @@ if ($rDataBatalKlaim <= 0) {
                     <b>:</b>
                 </td>
                 <td style=" border: none;">
-                    <b><?php echo $batchId; ?></b>
+                    <b><?php echo $batchId;
+                            ?></b>
                 </td>
             </tr>
             <tr>
@@ -127,17 +133,17 @@ if ($rDataBatalKlaim <= 0) {
             <th style="color : white">Nama Debitur</th>
             <th style="color : white">Cabang Bank</th>
             <th style="color : white">Kantor Cabang Askrindo</th>
-            <!-- <th style="color : white">Id Tgr</th> -->
-            <!-- <th style="color : white">Tanggal Tgr</th> -->
+            <th style="color : white">Id Tgr</th>
+            <th style="color : white">Tanggal Tgr</th>
             <th style="color : white">Id Sertifikat</th>
-            <!-- <th style="color : white">Tanggal Sertifikat</th> -->
+            <th style="color : white">Tanggal Sertifikat</th>
             <th style="color : white">Nomor Klaim</th>
             <th style="color : white">Tanggal Klaim</th>
             <th style="color : white">Keterangan Tolak Bank</th>
             <th style="color : white">Tanggal Kirim Bank</th>
             <th style="color : white">Tanggal Request Pengembalian Dana</th>
-            <!-- <th style="color : white">Tanggal Approve KUR</th> -->
-            <!-- <th style="color : white">Tanggal Approve Keuaangan</th> -->
+            <th style="color : white">Tanggal Approve KUR</th>
+            <th style="color : white">Tanggal Approve Keuangan</th>
             <th style="color : white">Nilai Tuntutan</th>
             <th style="color : white">Jumlah Net Klaim</th>
         </tr>
@@ -183,16 +189,36 @@ if ($rDataBatalKlaim <= 0) {
                         }
                         ?></td>
             <td><?php echo $dq['kantor']; ?></td>
+            <td><?php echo $dq['id_tgr']; ?></td>
+            <td><?php echo $dq['tgl_kirim']; ?></td>
             <td><?php echo $dq['no_sertifikat']; ?></td>
-
-
+            <td><?php if ($dq['tanggal_sertifikat_kur_spr']) {
+                            echo date('d/m/Y', strtotime($dq['tanggal_sertifikat_kur_spr']));
+                        } else if ($dq['tanggal_sertifikat_kur']) {
+                            echo date('d/m/Y', strtotime($dq['tanggal_sertifikat_kur']));
+                        }
+                        ?></td>
             <td><?php echo $dq['no_klaim']; ?></td>
 
-            <td><?php echo $dq['tgl_klaim']; ?></td>
+            <td><?php echo date('d/m/Y', strtotime($dq['tgl_klaim'])); ?></td>
 
             <td><?php echo $dq['ket_tolak']; ?></td>
-            <td><?php echo $dq['tgl_kirim']; ?></td>
             <td><?php echo date('d/m/Y', strtotime($dq['sys_autodate'])); ?></td>
+
+            <td><?php echo date('d/m/Y', strtotime($createDate)); ?></td>
+            <td><?php if ($dq['tgl_approve_kur']) {
+
+                            echo date('d/m/Y', strtotime($dq['tgl_approve_kur']));
+                        } else {
+                            echo $dq['tgl_approve_kur'];
+                        }
+                        ?></td>
+            <td><?php
+                        if ($dq['tgl_approve_kur']) {
+                            echo date('d/m/Y', strtotime($dq['tgl_approve_keu']));
+                        } else {
+                            echo $dq['tgl_approve_keu'];
+                        } ?></td>
             <td><?php echo "Rp " . number_format($dq['jml_tuntutan'], 2, ",", "."); ?> </td>
 
             <td><?php echo "Rp " . number_format($dq['jml_net_klaim'], 2, ",", "."); ?></td>
@@ -204,7 +230,7 @@ if ($rDataBatalKlaim <= 0) {
             }
             ?>
         <tr>
-            <td colspan="8" style="font-weight: bold;">Total Permintaan Pengembalian Dana Klaim</td>
+            <td colspan="19" style="font-weight: bold;">Total Permintaan Pengembalian Dana Klaim</td>
             <td style="font-weight: bold;"><?php echo "Rp " . number_format($totalNominalClaim, 2, ",", "."); ?></td>
         </tr>
 
