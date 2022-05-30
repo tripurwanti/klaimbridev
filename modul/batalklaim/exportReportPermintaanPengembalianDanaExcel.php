@@ -137,15 +137,17 @@ if ($rDataBatalKlaim <= 0) {
             <th style="color : white">Tanggal Tgr</th>
             <th style="color : white">Id Sertifikat</th>
             <th style="color : white">Tanggal Sertifikat</th>
+            <th style="color : white">Baki Debet</th>
+            <th style="color : white">Nilai Tuntutan</th>
+            <th style="color : white">Jumlah Net Klaim</th>
             <th style="color : white">Nomor Klaim</th>
             <th style="color : white">Tanggal Klaim</th>
             <th style="color : white">Keterangan Tolak Bank</th>
             <th style="color : white">Tanggal Kirim Bank</th>
             <th style="color : white">Tanggal Request Pengembalian Dana</th>
+            <th style="color : white">Batch Id Pengembalian Dana</th>
             <th style="color : white">Tanggal Approve KUR</th>
             <th style="color : white">Tanggal Approve Keuangan</th>
-            <th style="color : white">Nilai Tuntutan</th>
-            <th style="color : white">Jumlah Net Klaim</th>
         </tr>
         <?php
             $no = 1;
@@ -198,6 +200,11 @@ if ($rDataBatalKlaim <= 0) {
                             echo date('d/m/Y', strtotime($dq['tanggal_sertifikat_kur']));
                         }
                         ?></td>
+
+            <td><?php echo "Rp " . number_format($dq['jml_baki_debet'], 2, ",", "."); ?> </td>
+            <td><?php echo "Rp " . number_format($dq['jml_tuntutan'], 2, ",", "."); ?> </td>
+
+            <td><?php echo "Rp " . number_format($dq['jml_net_klaim'], 2, ",", "."); ?></td>
             <td><?php echo $dq['no_klaim']; ?></td>
 
             <td><?php echo date('d/m/Y', strtotime($dq['tgl_klaim'])); ?></td>
@@ -206,6 +213,9 @@ if ($rDataBatalKlaim <= 0) {
             <td><?php echo date('d/m/Y', strtotime($dq['sys_autodate'])); ?></td>
 
             <td><?php echo date('d/m/Y', strtotime($createDate)); ?></td>
+
+            <td><?php echo $batchId ?></td>
+
             <td><?php if ($dq['tgl_approve_kur']) {
 
                             echo date('d/m/Y', strtotime($dq['tgl_approve_kur']));
@@ -219,9 +229,6 @@ if ($rDataBatalKlaim <= 0) {
                         } else {
                             echo $dq['tgl_approve_keu'];
                         } ?></td>
-            <td><?php echo "Rp " . number_format($dq['jml_tuntutan'], 2, ",", "."); ?> </td>
-
-            <td><?php echo "Rp " . number_format($dq['jml_net_klaim'], 2, ",", "."); ?></td>
         </tr>
 
         <?php
