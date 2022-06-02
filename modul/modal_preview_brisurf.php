@@ -762,13 +762,13 @@ document.getElementById("mySubmit").disabled = false;
 function validate_fileupload(input_element) {
     var el = "";
     var allowed_extensions = new Array("pdf");
+    allowed_extensions = new Array("pdf", "jpg", "jpeg");
     // var el = document.getElementById("feedback");
     if (input_element.name == "dok_lkn") {
         el = document.getElementById("msgerrorlkn");
     } else if (input_element.name == "dok_sph") {
         el = document.getElementById("msgerrorsph");
     } else if (input_element.name == "ktp") {
-        allowed_extensions = new Array("pdf", "jpg", "jpeg");
         el = document.getElementById("msgerrorktp");
     } else if (input_element.name == "dok_slik") {
         el = document.getElementById("msgerrorslik");

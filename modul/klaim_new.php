@@ -19,6 +19,17 @@
     </div>
 </div>
 
+<?php
+if ($_GET['openmodal'] == 1) { ?>
+    <script>
+        $(function() {
+            $('#myModal').modal('show');
+        });
+    </script>
+<?php
+}
+?>
+
 
 <div id="myModal" class="modal">
     <div class="modal-dialog " style="overflow-y: auto; max-height:100%;  margin-top: 50px; margin-bottom:50px;">
@@ -36,85 +47,85 @@
 </div>
 
 <script type="text/javascript" language="javascript">
-$(document).ready(function() {
+    $(document).ready(function() {
 
-    $('#myModal').on('show.bs.modal', function(e) {
-        var loadurl = $(e.relatedTarget).data('whatever');
-        $(this).find('.modal-body').load(loadurl);
+        $('#myModal').on('show.bs.modal', function(e) {
+            var loadurl = $(e.relatedTarget).data('whatever');
+            $(this).find('.modal-body').load(loadurl);
+        });
+
+        fetching();
+
+        function fetching() {
+            $('#loadingMessage').show();
+            var url_string = window.location.href
+            var url = new URL(url_string);
+            var c = url.searchParams.get("q");
+
+            $.ajax({
+                "url": "modul/fetch.php",
+                "type": "POST",
+                "data": {
+                    "q": c
+                },
+                success: function(html) {
+                    var o = JSON.parse(html);
+                    var t = $('#user_data').DataTable({
+                        "scrollX": true,
+                        //"scrollY": 500,
+                        dom: 'Bfrtip',
+                        buttons: [
+                            'excelHtml5'
+                        ],
+                        "columns": o.columns,
+                        "data": o.data
+                    });
+                    $('#loadingMessage').hide();
+                }
+            });
+        }
+
+        function update_data(id, column_name, value) {
+            $.ajax({
+                url: "update.php",
+                method: "POST",
+                data: {
+                    id: id,
+                    column_name: column_name,
+                    value: value
+                },
+                success: function(data) {
+                    $('#alert_message').html('<div class="alert alert-success">' + data + '</div>');
+                    $('#user_data').DataTable().destroy();
+                    fetch_data();
+                }
+            });
+            setInterval(function() {
+                $('#alert_message').html('');
+            }, 5000);
+        }
+
+        $(document).on('blur', '.update', function() {
+            var id = $(this).data("id");
+            var column_name = $(this).data("column");
+            var value = $(this).text();
+            update_data(id, column_name, value);
+        });
+
+
     });
 
-    fetching();
-
-    function fetching() {
-        $('#loadingMessage').show();
-        var url_string = window.location.href
-        var url = new URL(url_string);
-        var c = url.searchParams.get("q");
-
-        $.ajax({
-            "url": "modul/fetch.php",
-            "type": "POST",
-            "data": {
-                "q": c
-            },
-            success: function(html) {
-                var o = JSON.parse(html);
-                var t = $('#user_data').DataTable({
-                    "scrollX": true,
-                    //"scrollY": 500,
-                    dom: 'Bfrtip',
-                    buttons: [
-                        'excelHtml5'
-                    ],
-                    "columns": o.columns,
-                    "data": o.data
-                });
-                $('#loadingMessage').hide();
-            }
-        });
+    function downloadFile(strParam) {
+        window.open(document.getElementById("cmbDokumen" + strParam).value, '');
     }
 
-    function update_data(id, column_name, value) {
-        $.ajax({
-            url: "update.php",
-            method: "POST",
-            data: {
-                id: id,
-                column_name: column_name,
-                value: value
-            },
-            success: function(data) {
-                $('#alert_message').html('<div class="alert alert-success">' + data + '</div>');
-                $('#user_data').DataTable().destroy();
-                fetch_data();
-            }
-        });
-        setInterval(function() {
-            $('#alert_message').html('');
-        }, 5000);
-    }
-
-    $(document).on('blur', '.update', function() {
-        var id = $(this).data("id");
-        var column_name = $(this).data("column");
-        var value = $(this).text();
-        update_data(id, column_name, value);
-    });
-
-
-});
-
-function downloadFile(strParam) {
-    window.open(document.getElementById("cmbDokumen" + strParam).value, '');
-}
-
-/*$(document).ready(function() {
-	$('#example').DataTable();
-	
-	$('#myModal').on('show.bs.modal', function (e) {
-		var loadurl = $(e.relatedTarget).data('whatever');
-		$(this).find('.modal-body').load(loadurl);
-	});
-	
-} );*/
+    /*$(document).ready(function() {
+    	$('#example').DataTable();
+    	
+    	$('#myModal').on('show.bs.modal', function (e) {
+    		var loadurl = $(e.relatedTarget).data('whatever');
+    		$(this).find('.modal-body').load(loadurl);
+    	});
+    	
+    } );*/
 </script>

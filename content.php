@@ -32,9 +32,14 @@ if ($mod == 'home') {
 	include "modul/detail_rekon2.php";
 } elseif ($mod == 'subroMonitoring') {
 	include "modul/subrogasi/dataSubrogasiView.php";
-	// include "modul/subrogasi/subroController.php";
-	// $controller = new subroController();
-	// $controller->getListSubro();
+}
+// include "modul/subrogasi/subroController.php";
+// $controller = new subroController();
+// $controller->getListSubro();
+else if ($mod == 'batalklaim') {
+	include "modul/batalklaim/listBatalKlaimView.php";
+} else if ($mod == 'pengembaliandana') {
+	include "modul/batalklaim/monitoringPengembalianDanaView.php";
 } elseif ($mod == 'subroRejection') {
 	include "modul/subrogasi/penolakanSubroView.php";
 } elseif ($mod == 'subroUploadRC') {

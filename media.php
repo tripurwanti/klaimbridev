@@ -300,10 +300,36 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                                         </li>
                                     </ul>
                                 </li>
+<<<<<<< HEAD
 
                                 <?php
                                 if ($_SESSION['username'] == 'admin' || $_SESSION['username'] == 'userkp') {
                                 ?>
+=======
+                                <?php
+                                if ($_SESSION['username'] == 'admin' || $_SESSION['username'] == 'ask.klaim') {
+                                ?>
+
+                                    <li>
+                                        <a href="media.php?module=batalklaim"><i class="fa fa-home nav_icon"></i>Batal Klaim
+                                            Otomatis</a>
+                                    </li>
+                                <?php
+                                }
+                                if ($_SESSION['username'] == 'admin' || $_SESSION['username'] == 'ask.keuangan') {
+                                ?>
+                                    <li>
+                                        <a href="media.php?module=pengembaliandana"><i class="fa fa-home nav_icon"></i>Monitoring
+                                            Pengembalian Dana</a>
+                                    </li>
+                                <?php
+                                }
+                                ?>
+
+                                <?php
+                                if ($_SESSION['username'] == 'admin' || $_SESSION['username'] == 'userkp') {
+                                ?>
+>>>>>>> fd8d1a3140f48e4f15df47b53498dabadb8b84ae
                                     <li>
                                         <a href="#"><i class="fa fa-refresh nav_icon" style="color : white;"></i>Subrogasi<span class="fa arrow"></span></a>
                                         <ul class="nav nav-second-level collapse">
@@ -361,6 +387,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                                         </li>
 
                                     </ul>
+<<<<<<< HEAD
                                 </li>
                                 <li>
                                     <a href="#"><i class="fa fa-refresh nav_icon" style="color : white;"></i>UCL Booking<span class="fa arrow"></span></a>
@@ -378,6 +405,8 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                                         <a href="media.php?module=monitoringUCL"><i class="fa fa-upload nav_icon"></i>Monitoring Bank Garansi</a>
                                         </li>
                                     </ul>
+=======
+>>>>>>> fd8d1a3140f48e4f15df47b53498dabadb8b84ae
                                 </li>
                                 <li>
                                     <a href="http://10.220.20.4/askred_bri" target="_blank"><i class="fa fa-home nav_icon"></i>Askred Program</a>
