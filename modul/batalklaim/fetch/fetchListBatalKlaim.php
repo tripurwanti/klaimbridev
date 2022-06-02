@@ -4,7 +4,7 @@ error_reporting(1);
 include "../../../config/koneksi.php";
 session_start();
 
-$q = mssql_query("SELECT a.id as id_pengajuan_history, a.*, b.* ,c.* ,
+$q = mssql_query("SELECT a.id as id_pengajuan_history, a.history_create_date AS tgl_batal_klaim ,a.*, b.* ,c.* ,
 (SELECT TOP 1 b.nama_debitur FROM sp2_kur2015 b WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = b.no_rekening collate SQL_Latin1_General_CP1_CI_AS) AS nama_debitur,
 (SELECT TOP 1 d.nama_debitur FROM pengajuan_spr_kur_gen2 c, sp2_kur2015 d WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = c.no_rek_suplesi collate SQL_Latin1_General_CP1_CI_AS AND d.no_rekening collate SQL_Latin1_General_CP1_CI_AS = c.no_rekening collate SQL_Latin1_General_CP1_CI_AS) AS nama_debitur_spr,
 (SELECT TOP 1 e.nama FROM mapping_bank_bri e, sp2_kur2015 f WHERE e.kode_uker_bank collate SQL_Latin1_General_CP1_CI_AS = f.kode_uker AND a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = f.no_rekening collate SQL_Latin1_General_CP1_CI_AS ) AS kode_uker,
@@ -68,6 +68,7 @@ while ($row = mssql_fetch_array($q)) {
     $sub_array[] = $row['ket_tolak'];
     $sub_array[] = $row['sys_autodate'];
     $sub_array[] = $row['download_date'];
+    $sub_array[] = $row['tgl_batal_klaim'];
     $sub_array[] = $row['batch_id'];
     $data[] = $sub_array;
     $i++;
@@ -86,6 +87,7 @@ $title[]['title'] = 'No. Klaim';
 $title[]['title'] = 'Tanggal Klaim';
 $title[]['title'] = 'Ket. Tolak Bank';
 $title[]['title'] = 'Tgl Kirim Bank';
+$title[]['title'] = 'Tgl Batal Klaim';
 $title[]['title'] = 'Tgl Request Pengembalian';
 $title[]['title'] = 'Batch Id Pengembalian Dana';
 $columns = $title;
