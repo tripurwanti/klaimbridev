@@ -41,7 +41,7 @@
                             <th>Batch Id Pengembalian Dana</th>
                             <th>Status Batal</th>
                             <th>Status Dana</th>
-                            <th>Kantor</th>
+                            <th>Kantor Cabang</th>
                             <th>No Rekening</th>
                             <th>Nama Debitur</th>
                             <th>Cabang Bank</th>
