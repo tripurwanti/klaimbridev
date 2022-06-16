@@ -40,11 +40,11 @@ while ($row = mssql_fetch_array($q)) {
 	$sub_array = array();
 	$sub_array[] = $i;
 	if ($_POST['q'] != 'all' && $row['claim_source'] == 'BRISURF') {
-		$sub_array[] = "<button alt='Lihat Dokumen' type='button' class='btn btn-success btn-small' data-toggle='modal' data-target='#myModal' data-whatever='modul/modal_preview_brisurf.php?q=$_POST[q]&no_fasilitas=$row[no_rekening]&plafond=$row[jml_baki_debet]&tgl_mulai=$row[tgl_mulai]&jml_tuntutan=$row[jml_tuntutan]&sumberklaim=$row[claim_source]&flagdok=$row[flag_dokumen]'><i class='fa fa-search'></i> </button>";
+		$sub_array[] = "<button alt='Lihat Dokumen' type='button' class='btn btn-success btn-small' data-toggle='modal' title='Detail Klaim' data-target='#myModal' data-whatever='modul/modal_preview_brisurf.php?q=$_POST[q]&no_fasilitas=$row[no_rekening]&plafond=$row[jml_baki_debet]&tgl_mulai=$row[tgl_mulai]&jml_tuntutan=$row[jml_tuntutan]&sumberklaim=$row[claim_source]&flagdok=$row[flag_dokumen]'><i class='fa fa-search'></i> </button>";
 	} else if ($_POST['q'] != 'all' && $row['claim_source'] == 'BRIJAMIN') {
-		$sub_array[] = "<button alt='Lihat Dokumen' type='button' class='btn btn-success btn-small' data-toggle='modal' data-target='#myModal' data-whatever='modul/modal_preview.php?q=$_POST[q]&no_fasilitas=$row[no_rekening]&plafond=$row[jml_baki_debet]&tgl_mulai=$row[tgl_mulai]&jml_tuntutan=$row[jml_tuntutan]&sumberklaim=$row[claim_source]'><i class='fa fa-search'></i> </button>";
+		$sub_array[] = "<button alt='Lihat Dokumen' type='button' class='btn btn-success btn-small' data-toggle='modal' title='Detail Klaim' data-target='#myModal' data-whatever='modul/modal_preview.php?q=$_POST[q]&no_fasilitas=$row[no_rekening]&plafond=$row[jml_baki_debet]&tgl_mulai=$row[tgl_mulai]&jml_tuntutan=$row[jml_tuntutan]&sumberklaim=$row[claim_source]'><i class='fa fa-search'></i> </button>";
 	} else if ($_POST['q'] != 'all') {
-		$sub_array[] = "<button alt='Lihat Dokumen' type='button' class='btn btn-success btn-small' data-toggle='modal' data-target='#myModal' data-whatever='modul/modal_preview.php?q=$_POST[q]&no_fasilitas=$row[no_rekening]&plafond=$row[jml_baki_debet]&tgl_mulai=$row[tgl_mulai]&jml_tuntutan=$row[jml_tuntutan]&sumberklaim=$row[claim_source]'><i class='fa fa-search'></i> </button>";
+		$sub_array[] = "<button alt='Lihat Dokumen' type='button' class='btn btn-success btn-small' data-toggle='modal' title='Detail Klaim' data-target='#myModal' data-whatever='modul/modal_preview.php?q=$_POST[q]&no_fasilitas=$row[no_rekening]&plafond=$row[jml_baki_debet]&tgl_mulai=$row[tgl_mulai]&jml_tuntutan=$row[jml_tuntutan]&sumberklaim=$row[claim_source]'><i class='fa fa-search'></i> </button>";
 	}
 	$sub_array[] = $row['claim_source'];
 	$sub_array[] = $row['no_rekening'];
