@@ -98,7 +98,7 @@ Date:		22 Agustus 2017
 		</div>
 		<!--footer-->
 		<div class="footer">
-		   <p>&copy; 2017 Askrindo - Divisi Teknologi Informasi. Indonesia</p>
+		   <p>&copy; 2017 Askrindo - Divisi Te1231knologi Informasi. Indonesia</p>
 		</div>
         <!--//footer-->
 	</div>

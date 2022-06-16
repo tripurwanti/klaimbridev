@@ -60,6 +60,10 @@ else if ($mod == 'batalklaim') {
 	include "modul/claim/correctionClaimView.php";
 } elseif ($mod == 'claimUploadRC') {
 	include "modul/claim/uploadRCClaimView.php";
+} elseif ($mod == 'monitoringUCL') {
+	include "modul/ucl/monitoring.php";
+} elseif ($mod == 'inquirySP3') {
+	include "modul/ucl/inquirySP3.php";
 } elseif ($mod == 'claimListRC') {
 	include "modul/claim/listRCClaimView.php";
 } elseif ($mod == 'detailDataRCClaim') {

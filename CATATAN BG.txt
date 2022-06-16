@@ -1,0 +1,54 @@
+A2018103014382A00003 
+
+Dokumen tidak lengkap
+Aplikasi number : A2018103014382A00003
+Reuqest Id: EC14382A22022591804 KUR
+
+
+Aplikasi number : A2019062714382A00003
+Reuqest Id: EC14382A220224CC57F
+
+Aplikasi number : A2019032314306A00003
+Reuqest Id: EC14306A211016D9F89
+
+
+Baki debet = current ballance
+
+Letter date => digunakan 
+Download -> table data klaim ditolak : undefined
+
+Putu Yolanda1:48 PM
+1435 -> FD, analis, kabid jadi satu user
+SURBEX.PINCAB -> pincab
+
+password : Ask#2019
+https://single-acs-uat.askrindo.co.id/#/
+Fatimah Novita Sari2:32 PM
+016.1403.17000036836/000
+
+
+.247 -> portal
+10.20.10.16 yang dikenal BRI
+
+nominalbooking = nilai penjaminan
+jika ada PP di ACS maka insert ke tbl kbg_ucl_booking di AOS
+kode cabang askrindo : tambahan query di ACS
+3 PENGAJUAN: ada counter perbulan, nanti ditambahin di table refrensi
+
+
+buat refrensi untuk curr:
+1: IDR
+2: USD
+
+jika pertama klai diinsert , set status 0 di tabl kbg_ucl_booking
+ketika di kirim bri, DAN DAPAT RESPONSE MAKA UPDATE [status] sukses set 1
+kalau gagal, set 2
+Jika cancel booking: update status => 3[batal] & IS_CANCEL => true
+Jika terbit PP: update status => 4
+Jika batal PP: update status => 5
+Jika daluarsa SP3 / PP: update status => 6
+
+CEK TERBIT PP & cek daluarsa SP3
+Pasang scheduler ke acs , Menggunakan QUERY
+
+CEK DALUARSA SP3
