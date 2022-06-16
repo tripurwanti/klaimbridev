@@ -78,15 +78,11 @@
             document.getElementById("downloadButton").disabled = false;
         }
 
-        
     }
 
-    
-        
     function test(noRek, noKlaim, ketTolak){
             alert(ketTolak);
         }
-
 
     function resetHandler() {
         document.getElementById("msgerrorstartdate").innerHTML = "";
@@ -129,6 +125,7 @@
                 "url": "modul/batalklaim/fetch/fetchListBatalKlaim.php",
                 "type": "POST",
                 success: function(html) {
+                    console.log(JSON.parse(html));
                     var o = JSON.parse(html);
                     var t = $('#user_data').DataTable({
                         "scrollX": true,
@@ -146,7 +143,6 @@
                             }
                             <?php
                             }?>
-                            
                         ],
                         "columns": o.columns,
                         "data": o.data

@@ -27,8 +27,6 @@ $data = array(
     'perbaikanKolek' => $isKolek
 );
 $payloadRequest = json_encode($data);
-print_r($payloadRequest);
-die();
 // var_dump($payloadRequest);
 curl_setopt($curl, CURLOPT_POSTFIELDS, $payloadRequest);
 // }
