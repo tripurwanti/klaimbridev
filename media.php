@@ -164,7 +164,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                                     <a href="media.php?module=home"><i class="fa fa-home nav_icon"></i>Beranda</a>
                                 </li>
                                 <li>
-                                    <a href="#"><i class="fa fa-files-o nav_icon"></i>Pengajuan Klaim<span class="fa arrow"></span></a>
+                                    <a href="#"><i class="fa fa-files-o nav_icon"></i>Pengajuan Klaim <span class="fa arrow"></span></a>
                                     <?php
                                     //query dulu yuk!
 
@@ -300,7 +300,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                                     </ul>
                                 </li>
                                 <?php
-                                if ($_SESSION['username'] == 'admin' || $_SESSION['username'] == 'ask.klaim') {
+                                if ($_SESSION['username'] == 'admin' || $_SESSION['username'] == 'ask.klaim' || $_SESSION['username'] != 'ask.keuangan') {
                                 ?>
 
                                     <li>

@@ -135,12 +135,18 @@
                         dom: 'Bfrtip',
                         buttons: [
                             'excelHtml5',
+                            <?php 
+                            if($_SESSION['username'] == 'admin' || $_SESSION['username'] == 'ask.klaim'){;
+                            ?>
                             {
                                 text: 'Download Permintaan Pengembalian Dana',
                                 action: function(e, dt, node, config) {
                                     $('#myModal').modal('show');
                                 }
                             }
+                            <?php
+                            }?>
+                            
                         ],
                         "columns": o.columns,
                         "data": o.data
