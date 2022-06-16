@@ -28,11 +28,12 @@ while ($row = mssql_fetch_array($q)) {
     $sub_array = array();
     $sub_array[] = $i;
     if ($row['status_batal'] == 2) {
-        $sub_array[] = "<a href='modul/batalklaim/fetch/batalSakura.php?noRekening=$noRekening&noKlaim=$noKlaim&ketTolak=$ketTolak'><i class='fa fa-arrow-up' aria-hidden='true'></i> </a>";
+        $sub_array[] = '<a href="#" id="kirimUlang" onClick="test('."'".$noRekening."',"."'".$noKlaim."',"."'".$ketTolak."'".')" data-toggle="tooltipResend" data-placement="top" title="Kirim Ulang"><i class="fa fa-arrow-up" aria-hidden="true"></i> </a>';
+        // $sub_array[] = "<a href='modul/batalklaim/fetch/batalSakura.php?noRekening=$noRekening&noKlaim=$noKlaim&ketTolak=$ketTolak' data-toggle='tooltipResend' data-placement='top' title='Kirim Ulang'><i class='fa fa-arrow-up' aria-hidden='true'></i> </a>";
     } else if ($row['status_batal'] == 1 && $row['status_dana'] == 1) {
-        $sub_array[] = "<a href='modul/batalklaim/fetch/downloadBuktiPengembalianDana.php?id=$idPengajuanHistory'><i class='fa fa-eye' aria-hidden='true'></i> </a>";
+        $sub_array[] = "<a href='modul/batalklaim/fetch/downloadBuktiPengembalianDana.php?id=$idPengajuanHistory'  data-toggle='tooltipDownload' data-placement='top' title='Lihat Data'><i class='fa fa-eye' aria-hidden='true'></i> </a>";
     } else if (($row['status_dana'] == null || $row['status_dana'] == 0) && $row['status_batal'] == 2) {
-        $sub_array[] = "<a href='modul/batalklaim/fetch/batalSakura.php?noRekening=$noRekening&noKlaim=$noKlaim&ketTolak=$ketTolak'><i class='fa fa-arrow-up' aria-hidden='true'></i> </a>";
+        $sub_array[] = "<a href='modul/batalklaim/fetch/batalSakura.php?noRekening=$noRekening&noKlaim=$noKlaim&ketTolak=$ketTolak'  data-toggle='tooltipResend' data-placement='top' title='Kirim Ulang'><i class='fa fa-arrow-up' aria-hidden='true'></i> </a>";
     } else if (($row['status_dana'] == null || $row['status_dana'] == 0) && $row['status_batal'] == 1) {
         $sub_array[] = "";
     }
@@ -43,6 +44,17 @@ while ($row = mssql_fetch_array($q)) {
     } else if ($row['status_batal'] == 2) {
         $sub_array[] = 'Pending Batal Klaim';
     }
+
+    if ($row['status_klaim'] == 0) {
+        $sub_array[] = 'Revisi Data';
+    } else if ($row['status_klaim'] == 1) {
+        $sub_array[] = 'Data diSetujui di Sakura';
+    } else if ($row['status_klaim'] == 2) {
+        $sub_array[] = 'Data ditolak di Sakura';
+    } else if ($row['status_klaim'] == 3) {
+        $sub_array[] = 'Rekening Closed';
+    }
+
     if ($row['status_dana'] == null) {
         $sub_array[] = 'Belum dikembalikan';
     } else if ($row['status_dana'] == 1) {
@@ -78,6 +90,7 @@ $columns = array();
 $title[]['title'] = '#';
 $title[]['title'] = 'Aksi';
 $title[]['title'] = 'Status Batal';
+$title[]['title'] = 'Status Pengajuan Klaim Sebelumnya';
 $title[]['title'] = 'Status Dana';
 $title[]['title'] = 'No Rekening';
 $title[]['title'] = 'Nama Debitur';
