@@ -21,6 +21,59 @@ $tahun         = substr($_POST['tgl_mulai'], 0, 4);
 $plafond    = $_POST['plafond'];
 $plafondx    = number_format($plafond, 2, ",", ".");
 $banyak_dok    = $_POST['banyak_dokumen'];
+$norekPinjaman = $_POST['no_fasilitas'];
+
+//inquiry data claim 
+$url = 'localhost:8081/api/claim/inquiryClaim';
+$curl = curl_init();
+curl_setopt($curl, CURLOPT_POST, 1);
+
+$payload = json_encode(array("nomorPeserta" => $norekPinjaman));
+if ($payload) {
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
+}
+curl_setopt($curl, CURLOPT_URL, $url);
+curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+    'Content-Type: application/json',
+));
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+
+$resultcurl = curl_exec($curl);
+curl_close($curl);
+
+$result = json_decode($resultcurl, true);
+if($result['dataClaim'][0]['claimStatus'] == 7){
+    moveDataClaimToHistory($norekPinjaman);
+    echo "<script>window.alert('Status claim : " .$result['dataClaim'][0]['claimStatusDesc']. ". Data telah dibatalkan, mohon cek menu batal klaim');
+    </script>";
+    exit;
+}
+
+//move data pengajuam claim kur gen 2 to table history
+function moveDataClaimToHistory($noRekening){
+    $url = 'localhost:8081/api/claim/moveDataClaim';
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_POST, 1);
+
+    $payload = json_encode(array("nomorPeserta" => $noRekening));
+    if ($payload) {
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
+    }
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/json',
+    ));
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+
+    // EXECUTE:
+    $resultcurl = curl_exec($curl);
+    // if (!$resultcurl) {
+    //     die("Connection Failure");
+    // }
+    curl_close($curl);
+}
 
 session_start();
 if (isset($_POST['doklengkap'])) {

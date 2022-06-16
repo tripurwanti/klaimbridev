@@ -24,6 +24,70 @@ $claimConfirmation = mssql_query("SELECT * FROM askred_claim_confirmation WHERE 
 $rClaimConfirmation  = mssql_num_rows($claimConfirmation);
 $dClaimConfirmation = mssql_fetch_array($claimConfirmation);
 
+//inquiry data claim 
+function inquiryClaim($noPeserta){
+    $url = 'localhost:8081/api/claim/inquiryClaim';
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_POST, 1);
+    
+    $payload = json_encode(array("nomorPeserta" => $noPeserta));
+    if ($payload) {
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
+    }
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/json',
+    ));
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+
+    // EXECUTE:
+    $resultcurl = curl_exec($curl);
+    // if (!$resultcurl) {
+    //     die("Connection Failure");
+    // }
+    curl_close($curl);
+
+    $result = json_decode($resultcurl, true);
+    if($result['dataClaim'][0]['claimStatus'] == 7){
+        moveDataClaimToHistory($noPeserta);
+        echo "<script>window.alert('Status claim : " .$result['dataClaim'][0]['claimStatusDesc']. ". Data telah dibatalkan, mohon cek menu batal klaim')
+        window.location=(href='http://localhost/klaimbridev/media.php?module=klaim&q=0&title=Belum%20Diverifikasi')
+        </script>";
+    } else {
+        echo "<script>window.alert('Status claim : " .$result['dataClaim'][0]['claimStatusDesc']. "');
+        </script>";
+    }
+    
+    return $result;
+}
+
+//move data pengajuam claim kur gen 2 to table history
+function moveDataClaimToHistory($noPeserta){
+    $url = 'localhost:8081/api/claim/moveDataClaim';
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_POST, 1);
+
+    $payload = json_encode(array("nomorPeserta" => $noPeserta));
+    if ($payload) {
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
+    }
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/json',
+    ));
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+
+    // EXECUTE:
+    $resultcurl = curl_exec($curl);
+    // if (!$resultcurl) {
+    //     die("Connection Failure");
+    // }
+    curl_close($curl);
+}
+
+$inquiryClaimResult = inquiryClaim($norekPinjaman);
 ?>
 
 <label style="font-size: 1em;"><b>No. Rekening:
@@ -209,6 +273,10 @@ if ($statusKlaim == '0') {
     <form action="modul/pengajuanclaim/prosesVerifikasiDocBrisurf.php" method="POST"
         onsubmit="return confirm('Data Sudah Benar?');">
 
+        <!-- <form name="formValidate" action="" method="POST"
+        onsubmit="return confirm('Data Sudah Benar?');"> -->
+
+        <!-- <input type="hidden" id='norekening' name="noRek" value="<?php echo $_GET[no_fasilitas]; ?>"> -->
         <input type="hidden" name="no_fasilitas" value="<?php echo $_GET[no_fasilitas]; ?>">
         <input type="hidden" name="plafond" value="<?php echo $_GET[plafond]; ?>">
         <input type="hidden" name="tgl_mulai" value="<?php echo $_GET[tgl_mulai]; ?>">
@@ -421,14 +489,16 @@ if ($statusKlaim == '0') {
 <?php
     // var_dump($dataDokumenAvailable);
     // echo count($dataDokumenAvailable);
-    if ((count($dataDokumenAvailable) - 1) < 5 ||  $disabledCheckboxRC == "disabled") {
-        echo "<button type='submit'  name='doklengkap' class='btn btn-primary' disabled >Dokumen Lengkap</button>&nbsp;";
+    if ((count($dataDokumenAvailable) - 1) < 5 ||  $disabledCheckboxRC == "disabled" || $inquiryClaimResult['dataClaim'][0]['claimStatus'] == 7) {
+        echo "<button type='submit' id='dokLegnkap' name='doklengkap' class='btn btn-primary' disabled >Dokumen Lengkap</button>&nbsp;";
     } else {
-        echo "<button type='submit'  name='doklengkap' class='btn btn-primary'>Dokumen Lengkap</button>&nbsp;";
+        echo "<button type='submit'  id='dokLegnkap' name='doklengkap' class='btn btn-primary'>Dokumen Lengkap</button>&nbsp;";
     }
     // else if ($_GET['q'] == 3) {
     //     echo "<button type='submit' name='doklengkapManual' class='btn btn-danger'>Dokumen Lengkap Manual!</button>";
     // }
+    
+
     ?>
 </form>
 </div>
@@ -554,7 +624,7 @@ if ($statusKlaim == '0') {
                 // echo $nqDinfoCount2;
                 // echo $nqDinfoRcUpload;
                 // echo $nqDinfoRcRaw;
-                if ($nqDinfoCount2 <= 5 || ($nqDinfoRcUpload <= 0 && $nqDinfoRcRaw <= 0)) {
+                if ($nqDinfoCount2 <= 5 || ($nqDinfoRcUpload <= 0 && $nqDinfoRcRaw <= 0) || $inquiryClaimResult['dataClaim'][0]['claimStatus'] == 7) {
                     echo "<button type='submit' name='dokTidakLengkap' class='btn btn-danger'>Dokumen Tidak Lengkap</button>&nbsp;";
                     echo "<button type='submit' name='dokLengkapManual' class='btn btn-success'>Dokumen Lengkap Manual</button>";
                 } else {
@@ -758,6 +828,31 @@ if ($statusKlaim == '0') {
 
 <script type="text/javascript" language="javascript">
 document.getElementById("mySubmit").disabled = false;
+
+// $(document).ready(function() {
+//         $("form[name=formValidate]").submit(function(e) {
+//             // var noRek = document.getElementById("norekening");
+//             // console.log();
+//             // $("#norekening")
+//             console.log("result: ", $("#norekening").val());
+//             var noPeserta = $("#norekening").val();
+//             e.preventDefault();
+//             $.ajax({
+//                     method: "POST",
+//                     url: "modul/claim/inquiryClaim.php",
+//                     data: {nomor_rekening: noPeserta},
+//                     success: function(data){
+//                         // $("#loading").hide();
+//                         alert(data);
+//                         // window.location.href='http://10.10.1.247:81/klaimbridev/media.php?module=listData';
+//                     },
+//                     error: function(error){
+//                         alert(error);
+//                     }
+//         });
+//     });
+// });
+
 
 function validate_fileupload(input_element) {
     var el = "";
