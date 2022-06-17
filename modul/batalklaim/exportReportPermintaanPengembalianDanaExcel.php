@@ -29,20 +29,6 @@ CONVERT(varchar, a.history_create_date , 111)
 BETWEEN '$startDate' AND '$endDate' 
 AND a.status_batal = '1' AND a.batch_id is null";
 
-echo "SELECT a.*, j.*, l.kantor , k.* ,(SELECT TOP 1 b.nama_debitur FROM sp2_kur2015 b WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = b.no_rekening collate SQL_Latin1_General_CP1_CI_AS) AS nama_debitur,
-(SELECT TOP 1 m.tanggal_sertifikat FROM sertifikat_kur m WHERE a.no_sertifikat collate SQL_Latin1_General_CP1_CI_AS = m.no_sertifikat collate SQL_Latin1_General_CP1_CI_AS) AS tanggal_sertifikat_kur ,
-(SELECT TOP 1 n.tanggal_sertifikat FROM sertifikat_kur_spr n WHERE a.no_sertifikat collate SQL_Latin1_General_CP1_CI_AS = n.no_sertifikat collate SQL_Latin1_General_CP1_CI_AS) AS tanggal_sertifikat_kur_spr,
-(SELECT TOP 1 d.nama_debitur FROM pengajuan_spr_kur_gen2 c, sp2_kur2015 d WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = c.no_rek_suplesi collate SQL_Latin1_General_CP1_CI_AS AND d.no_rekening collate SQL_Latin1_General_CP1_CI_AS = c.no_rekening collate SQL_Latin1_General_CP1_CI_AS) AS nama_debitur_spr,
-(SELECT TOP 1 e.nama FROM mapping_bank_bri e, sp2_kur2015 f WHERE e.kode_uker_bank collate SQL_Latin1_General_CP1_CI_AS = f.kode_uker AND a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = f.no_rekening collate SQL_Latin1_General_CP1_CI_AS ) AS kode_uker,
-(SELECT TOP 1 g.nama FROM mapping_bank_bri g, sp2_kur2015 h, pengajuan_spr_kur_gen2 i WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = i.no_rek_suplesi collate SQL_Latin1_General_CP1_CI_AS 
-AND h.no_rekening collate SQL_Latin1_General_CP1_CI_AS = i.no_rekening collate SQL_Latin1_General_CP1_CI_AS
-AND g.kode_uker_bank collate SQL_Latin1_General_CP1_CI_AS = h.kode_uker collate SQL_Latin1_General_CP1_CI_AS) AS kode_uker_spr 
-FROM pengajuan_klaim_kur_gen2_history a INNER JOIN jawaban_klaim_kur_gen2_history j ON a.id = j.id_pengajuan_history 
-LEFT JOIN pengembalian_dana_batch k ON a.batch_id = k.batch_id 
-INNER JOIN r_kantor l ON substring(a.no_sertifikat, 4, 2) = l.id_kantor AND
-CONVERT(varchar, a.history_create_date , 111) 
-BETWEEN '$startDate' AND '$endDate' 
-AND a.status_batal = '1' AND a.batch_id is null";
 
 $dataBatalKlaim = mssql_query($query);
 

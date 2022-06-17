@@ -14,12 +14,17 @@ $date = date("Y-m-d");
 $createDate = date("Y-m-d H:i:s");
 $date2 = date('d/m/Y', strtotime($createDate));
 $rootdir = "klaimbridev";
+$data = $_GET['data'];
+$value = explode(", ", $data);
+$str = "'" . implode ( "', '", $value ) . "'";
 $dataBatalKlaim = mssql_query("SELECT j.*,  k.* ,(SELECT TOP 1 b.nama_debitur FROM sp2_kur2015 b WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = b.no_rekening collate SQL_Latin1_General_CP1_CI_AS) AS nama_debitur,
 (SELECT TOP 1 d.nama_debitur FROM pengajuan_spr_kur_gen2 c, sp2_kur2015 d 
   WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = c.no_rek_suplesi collate SQL_Latin1_General_CP1_CI_AS 
   AND d.no_rekening collate SQL_Latin1_General_CP1_CI_AS = c.no_rekening collate SQL_Latin1_General_CP1_CI_AS) AS nama_debitur_spr
   FROM pengajuan_klaim_kur_gen2_history a INNER JOIN jawaban_klaim_kur_gen2_history j ON a.id = j.id_pengajuan_history 
-  INNER JOIN pengembalian_dana_batch k ON a.batch_id = k.batch_id ", $con);
+  INNER JOIN pengembalian_dana_batch k ON a.batch_id = k.batch_id 
+  WHERE k.status_dana = 0 AND
+  a.batch_id IN ($str)", $con);
 
 
 // $rDataBatalKlaim = mssql_num_rows($dataBatalKlaim);
