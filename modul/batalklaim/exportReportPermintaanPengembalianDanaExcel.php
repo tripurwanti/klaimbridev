@@ -29,6 +29,8 @@ CONVERT(varchar, a.history_create_date , 111)
 BETWEEN '$startDate' AND '$endDate' 
 AND a.status_batal = '1' AND a.batch_id is null";
 
+echo $query;
+die();
 
 $dataBatalKlaim = mssql_query($query);
 
