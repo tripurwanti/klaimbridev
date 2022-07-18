@@ -37,6 +37,7 @@
                         <tr>
                             <th>#</th>
                             <th> <input type="checkbox" id="flowcheckall" value="" />&nbsp; Select All</th>
+
                             <th>Batch Id Pengembalian Dana</th>
                             <th>Status Batal</th>
                             <th>Status Dana</th>
@@ -198,7 +199,7 @@ $(document).ready(function() {
         // var btnSelectAll = "<th><input type='checkbox' id='flowcheckall' value='' />&nbsp;Select All</th>"
         // $("#table_batalklaim > thead").append(btnSelectAll);
         $.ajax({
-            "url": "modul/batalklaim/fetch/fetchMonitoringPengembalianDana.php",
+            "url": "modul/batalklaim/fetch/fetchMonitoringPengembalianDanaBathcId.php",
             "type": "POST",
             success: function(html) {
                 var o = JSON.parse(html);
@@ -210,36 +211,8 @@ $(document).ready(function() {
                         {
                             text: 'Download',
                             action: function(e, dt, node, config) {
-                                var rows = [];
-                                $('.checkitem:checked').each(function() {
-                                    var row = $(this).parent().parent();
-
-                                    var batchid = {};
-                                    $(row).find("td").each(function(i,
-                                        obj) {
-                                        if (i == 2) {
-                                            batchid = $(this)
-                                                .text();
-                                        }
-                                    })
-
-                                    if (jQuery.inArray(batchid, rows) == -
-                                        1) {
-                                        rows.push(batchid);
-                                    };
-
-                                })
-
-                                if (rows.length == 0) {
-                                    window.alert(
-                                        'Tidak ada data yang dipilih (dicentang)'
-                                    );
-                                } else {
-                                    window.location.href =
-                                    "modul/batalklaim/exportReportMonitoringPengembalianDanaExcel.php?data=" + rows.join(",");
-                                }
-
-
+                                window.location.href =
+                                    "modul/batalklaim/exportReportMonitoringPengembalianDanaExcel.php";
                             }
                         },
                         {
@@ -348,8 +321,8 @@ $("#data_batalklaim").on('change', "input[type='checkbox']", function(e) {
     if (isChecked) {
         for (var i = 0; i < cols.length; i++) {
             if (batchid == cols[i][2]) {
-                if (this.value != cols[i][6]) {
-                    $('#checkitem' + cols[i][6]).prop('checked', true);
+                if (this.value != cols[i][5]) {
+                    $('#checkitem' + cols[i][5]).prop('checked', true);
                 }
 
             }
@@ -357,8 +330,8 @@ $("#data_batalklaim").on('change', "input[type='checkbox']", function(e) {
     } else {
         for (var i = 0; i < cols.length; i++) {
             if (batchid == cols[i][2]) {
-                if (this.value != cols[i][6]) {
-                    $('#checkitem' + cols[i][6]).prop('checked', false);
+                if (this.value != cols[i][5]) {
+                    $('#checkitem' + cols[i][5]).prop('checked', false);
                 }
             }
         }

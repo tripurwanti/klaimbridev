@@ -1,6 +1,7 @@
 <?php
 error_reporting(1);
 include "../../../config/koneksi.php";
+// $rootdir = "klaimbri";
 $rootdir = "klaimbridevwanti/klaimbridev";
 $msg = '';
 $noRekening = $_REQUEST['noRekening'];
@@ -17,6 +18,7 @@ if (strpos($ketTolak, "olektabilitas bergeser membaik")) {
 }
 // echo $isKolek;
 
+// $url = 'http://10.20.10.5:9081/api/op/klaim/cancel';
 $url = 'http://10.20.10.5:8081/api/op/klaim/cancel';
 $curl = curl_init();
 curl_setopt($curl, CURLOPT_POST, 1);
@@ -27,8 +29,6 @@ $data = array(
     'perbaikanKolek' => $isKolek
 );
 $payloadRequest = json_encode($data);
-print_r($payloadRequest);
-die();
 // var_dump($payloadRequest);
 curl_setopt($curl, CURLOPT_POSTFIELDS, $payloadRequest);
 // }

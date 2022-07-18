@@ -36,6 +36,7 @@ if ($rDataBatalKlaim <= 0) {
     echo '<script language="javascript">';
     echo 'alert("Semua data sedang dalam proses pengembalian dana")';
     echo '</script>';
+    // echo "<script>window.location.href='http://" . $server . ":81/" . $rootdir . "/klaimbri/media.php?module=batalklaim'</script>";
     echo "<script>window.location.href='http://" . $server . ":81/" . $rootdir . "/klaimbridev/media.php?module=batalklaim'</script>";
 } else {
 

@@ -3,16 +3,33 @@
 error_reporting(1);
 include "../../../config/koneksi.php";
 session_start();
-
-$q = mssql_query("SELECT a.id as id_pengajuan_history, a.history_create_date AS tgl_batal_klaim ,a.*, b.* ,c.* ,
-(SELECT TOP 1 b.nama_debitur FROM sp2_kur2015 b WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = b.no_rekening collate SQL_Latin1_General_CP1_CI_AS) AS nama_debitur,
-(SELECT TOP 1 d.nama_debitur FROM pengajuan_spr_kur_gen2 c, sp2_kur2015 d WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = c.no_rek_suplesi collate SQL_Latin1_General_CP1_CI_AS AND d.no_rekening collate SQL_Latin1_General_CP1_CI_AS = c.no_rekening collate SQL_Latin1_General_CP1_CI_AS) AS nama_debitur_spr,
-(SELECT TOP 1 e.nama FROM mapping_bank_bri e, sp2_kur2015 f WHERE e.kode_uker_bank collate SQL_Latin1_General_CP1_CI_AS = f.kode_uker AND a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = f.no_rekening collate SQL_Latin1_General_CP1_CI_AS ) AS kode_uker,
-(SELECT TOP 1 g.nama FROM mapping_bank_bri g, sp2_kur2015 h, pengajuan_spr_kur_gen2 i WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = i.no_rek_suplesi collate SQL_Latin1_General_CP1_CI_AS 
-AND h.no_rekening collate SQL_Latin1_General_CP1_CI_AS = i.no_rekening collate SQL_Latin1_General_CP1_CI_AS
-AND g.kode_uker_bank collate SQL_Latin1_General_CP1_CI_AS = h.kode_uker collate SQL_Latin1_General_CP1_CI_AS) AS kode_uker_spr 
-FROM pengajuan_klaim_kur_gen2_history a INNER JOIN jawaban_klaim_kur_gen2_history b ON a.id = b.id_pengajuan_history 
-LEFT JOIN pengembalian_dana_batch c ON a.batch_id = c.batch_id  ORDER BY a.history_create_date DESC");
+$idKantor = $_SESSION['id_kantor'];
+if ($_SESSION['username'] == 'admin' || $_SESSION['username'] == 'ask.keuangan' || $_SESSION['username'] == 'ask.keuangan' || $_SESSION['username'] == 'ask.klaim' ) {
+    $q = mssql_query("SELECT a.id as id_pengajuan_history, a.no_rekening as 'noRekening', a.history_create_date AS tgl_batal_klaim ,a.*, b.* ,c.* ,
+    (SELECT TOP 1 b.nama_debitur FROM sp2_kur2015 b WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = b.no_rekening collate SQL_Latin1_General_CP1_CI_AS) AS nama_debitur,
+    (SELECT TOP 1 d.nama_debitur FROM pengajuan_spr_kur_gen2 c, sp2_kur2015 d WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = c.no_rek_suplesi collate SQL_Latin1_General_CP1_CI_AS AND d.no_rekening collate SQL_Latin1_General_CP1_CI_AS = c.no_rekening collate SQL_Latin1_General_CP1_CI_AS) AS nama_debitur_spr,
+    (SELECT TOP 1 e.nama FROM mapping_bank_bri e, sp2_kur2015 f WHERE e.kode_uker_bank collate SQL_Latin1_General_CP1_CI_AS = f.kode_uker AND a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = f.no_rekening collate SQL_Latin1_General_CP1_CI_AS ) AS kode_uker,
+    (SELECT TOP 1 g.nama FROM mapping_bank_bri g, sp2_kur2015 h, pengajuan_spr_kur_gen2 i WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = i.no_rek_suplesi collate SQL_Latin1_General_CP1_CI_AS 
+    AND h.no_rekening collate SQL_Latin1_General_CP1_CI_AS = i.no_rekening collate SQL_Latin1_General_CP1_CI_AS
+    AND g.kode_uker_bank collate SQL_Latin1_General_CP1_CI_AS = h.kode_uker collate SQL_Latin1_General_CP1_CI_AS) AS kode_uker_spr 
+    FROM pengajuan_klaim_kur_gen2_history a 
+    INNER JOIN jawaban_klaim_kur_gen2_history b ON a.id = b.id_pengajuan_history 
+    LEFT JOIN pengembalian_dana_batch c ON a.batch_id = c.batch_id
+    ORDER BY a.history_create_date DESC");
+}else{
+    $q = mssql_query("SELECT a.id as id_pengajuan_history, a.no_rekening as 'noRekening', a.history_create_date AS tgl_batal_klaim ,a.*, b.* ,c.* ,
+    (SELECT TOP 1 b.nama_debitur FROM sp2_kur2015 b WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = b.no_rekening collate SQL_Latin1_General_CP1_CI_AS) AS nama_debitur,
+    (SELECT TOP 1 d.nama_debitur FROM pengajuan_spr_kur_gen2 c, sp2_kur2015 d WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = c.no_rek_suplesi collate SQL_Latin1_General_CP1_CI_AS AND d.no_rekening collate SQL_Latin1_General_CP1_CI_AS = c.no_rekening collate SQL_Latin1_General_CP1_CI_AS) AS nama_debitur_spr,
+    (SELECT TOP 1 e.nama FROM mapping_bank_bri e, sp2_kur2015 f WHERE e.kode_uker_bank collate SQL_Latin1_General_CP1_CI_AS = f.kode_uker AND a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = f.no_rekening collate SQL_Latin1_General_CP1_CI_AS ) AS kode_uker,
+    (SELECT TOP 1 g.nama FROM mapping_bank_bri g, sp2_kur2015 h, pengajuan_spr_kur_gen2 i WHERE a.no_rekening collate SQL_Latin1_General_CP1_CI_AS = i.no_rek_suplesi collate SQL_Latin1_General_CP1_CI_AS 
+    AND h.no_rekening collate SQL_Latin1_General_CP1_CI_AS = i.no_rekening collate SQL_Latin1_General_CP1_CI_AS
+    AND g.kode_uker_bank collate SQL_Latin1_General_CP1_CI_AS = h.kode_uker collate SQL_Latin1_General_CP1_CI_AS) AS kode_uker_spr 
+    FROM pengajuan_klaim_kur_gen2_history a 
+    INNER JOIN jawaban_klaim_kur_gen2_history b ON a.id = b.id_pengajuan_history 
+    LEFT JOIN pengembalian_dana_batch c ON a.batch_id = c.batch_id 
+    WHERE substring(a.no_sertifikat, 4, 2) = $idKantor
+    ORDER BY a.history_create_date DESC");    
+}
 
 $n = mssql_num_rows($q);
 
@@ -28,8 +45,8 @@ while ($row = mssql_fetch_array($q)) {
     $sub_array = array();
     $sub_array[] = $i;
     if ($row['status_batal'] == 2) {
-        $sub_array[] = '<a href="#" id="kirimUlang" onClick="test('."'".$noRekening."',"."'".$noKlaim."',"."'".$ketTolak."'".')" data-toggle="tooltipResend" data-placement="top" title="Kirim Ulang"><i class="fa fa-arrow-up" aria-hidden="true"></i> </a>';
-        // $sub_array[] = "<a href='modul/batalklaim/fetch/batalSakura.php?noRekening=$noRekening&noKlaim=$noKlaim&ketTolak=$ketTolak' data-toggle='tooltipResend' data-placement='top' title='Kirim Ulang'><i class='fa fa-arrow-up' aria-hidden='true'></i> </a>";
+        // $sub_array[] = '<a href="#" id="kirimUlang" onClick="test('."'".$noRekening."',"."'".$noKlaim."',"."'".$ketTolak."'".')" data-toggle="tooltipResend" data-placement="top" title="Kirim Ulang"><i class="fa fa-arrow-up" aria-hidden="true"></i> </a>';
+        $sub_array[] = "<a href='modul/batalklaim/fetch/batalSakura.php?noRekening=$noRekening&noKlaim=$noKlaim&ketTolak=$ketTolak' data-toggle='tooltipResend' data-placement='top' title='Kirim Ulang'><i class='fa fa-arrow-up' aria-hidden='true'></i> </a>";
     } else if ($row['status_batal'] == 1 && $row['status_dana'] == 1) {
         $sub_array[] = "<a href='modul/batalklaim/fetch/downloadBuktiPengembalianDana.php?id=$idPengajuanHistory'  data-toggle='tooltipDownload' data-placement='top' title='Lihat Data'><i class='fa fa-eye' aria-hidden='true'></i> </a>";
     } else if (($row['status_dana'] == null || $row['status_dana'] == 0) && $row['status_batal'] == 2) {
@@ -63,7 +80,7 @@ while ($row = mssql_fetch_array($q)) {
         $sub_array[] = 'Menunggu dikembalikan';
     }
 
-    $sub_array[] = $row['no_rekening'];
+    $sub_array[] = $row['noRekening'];
     if ($row['nama_debitur_spr'] == null) {
         $sub_array[] = strtoupper($row['nama_debitur']);
     } else {

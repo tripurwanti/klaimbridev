@@ -27,7 +27,6 @@ $q = mssql_query("SELECT a.*, b.* ,c.* ,l.kantor as 'kantor',
         LEFT JOIN pengembalian_dana_batch c ON a.batch_id = c.batch_id  
         WHERE a.batch_id is not null AND c.status_dana = '0' ORDER BY a.history_create_date DESC");
 
-
 $n = mssql_num_rows($q);
 
 
@@ -59,7 +58,6 @@ while ($row = mssql_fetch_array($q)) {
     } else {
         $sub_array[] = strtoupper($row['nama_debitur_spr']);
     }
-
     if ($row['kode_uker_spr'] == null) {
         $sub_array[] = strtoupper($row['kode_uker']);
     } else {

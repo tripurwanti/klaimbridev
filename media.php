@@ -277,6 +277,9 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                                     </ul>
                                     <!-- /nav-second-level -->
                                 </li>
+                                <?php
+										if ($_SESSION[username] == 'admin' || $_SESSION[username] == 'ask.keuangan' || $_SESSION[username] == 'ask.akuntansi') {
+										?>
                                 <li>
                                     <a href="#"><i class="fa fa-tasks nav_icon" style="color : white;"></i>Pelunasan Klaim<span class="fa arrow"></span></a>
                                     <ul class="nav nav-second-level collapse">
@@ -299,6 +302,8 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                                         </li>
                                     </ul>
                                 </li>
+                                    }
+                                    ?>
                                 <?php
                                 if ($_SESSION['username'] == 'admin' || $_SESSION['username'] == 'ask.klaim' || $_SESSION['username'] != 'ask.keuangan') {
                                 ?>
