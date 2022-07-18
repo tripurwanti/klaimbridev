@@ -29,9 +29,6 @@ CONVERT(varchar, a.history_create_date , 111)
 BETWEEN '$startDate' AND '$endDate' 
 AND a.status_batal = '1' AND a.batch_id is null";
 
-echo $query;
-die();
-
 $dataBatalKlaim = mssql_query($query);
 
 $rDataBatalKlaim = mssql_num_rows($dataBatalKlaim);
@@ -39,6 +36,7 @@ if ($rDataBatalKlaim <= 0) {
     echo '<script language="javascript">';
     echo 'alert("Semua data sedang dalam proses pengembalian dana")';
     echo '</script>';
+    // echo "<script>window.location.href='http://" . $server . ":81/" . $rootdir . "/klaimbri/media.php?module=batalklaim'</script>";
     echo "<script>window.location.href='http://" . $server . ":81/" . $rootdir . "/klaimbridev/media.php?module=batalklaim'</script>";
 } else {
 

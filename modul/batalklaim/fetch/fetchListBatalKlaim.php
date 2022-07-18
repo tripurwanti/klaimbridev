@@ -13,7 +13,7 @@ if ($_SESSION['username'] == 'admin' || $_SESSION['username'] == 'ask.keuangan' 
     AND h.no_rekening collate SQL_Latin1_General_CP1_CI_AS = i.no_rekening collate SQL_Latin1_General_CP1_CI_AS
     AND g.kode_uker_bank collate SQL_Latin1_General_CP1_CI_AS = h.kode_uker collate SQL_Latin1_General_CP1_CI_AS) AS kode_uker_spr 
     FROM pengajuan_klaim_kur_gen2_history a 
-    LEFT JOIN jawaban_klaim_kur_gen2_history b ON a.id = b.id_pengajuan_history 
+    INNER JOIN jawaban_klaim_kur_gen2_history b ON a.id = b.id_pengajuan_history 
     LEFT JOIN pengembalian_dana_batch c ON a.batch_id = c.batch_id
     ORDER BY a.history_create_date DESC");
 }else{
@@ -25,7 +25,7 @@ if ($_SESSION['username'] == 'admin' || $_SESSION['username'] == 'ask.keuangan' 
     AND h.no_rekening collate SQL_Latin1_General_CP1_CI_AS = i.no_rekening collate SQL_Latin1_General_CP1_CI_AS
     AND g.kode_uker_bank collate SQL_Latin1_General_CP1_CI_AS = h.kode_uker collate SQL_Latin1_General_CP1_CI_AS) AS kode_uker_spr 
     FROM pengajuan_klaim_kur_gen2_history a 
-    LEFT JOIN jawaban_klaim_kur_gen2_history b ON a.id = b.id_pengajuan_history 
+    INNER JOIN jawaban_klaim_kur_gen2_history b ON a.id = b.id_pengajuan_history 
     LEFT JOIN pengembalian_dana_batch c ON a.batch_id = c.batch_id 
     WHERE substring(a.no_sertifikat, 4, 2) = $idKantor
     ORDER BY a.history_create_date DESC");    

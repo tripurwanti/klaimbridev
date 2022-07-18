@@ -2,6 +2,7 @@
 //fetch.php
 error_reporting(1);
 include "../../../config/koneksi.php";
+// $rootdir = "klaimbri";
 $rootdir = "klaimbridevwanti/klaimbridev";
 
 $file_bukti_temp = $_FILES['bukti_dana']['tmp_name'];
