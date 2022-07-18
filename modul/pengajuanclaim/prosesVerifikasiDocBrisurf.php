@@ -24,7 +24,7 @@ $banyak_dok    = $_POST['banyak_dokumen'];
 $norekPinjaman = $_POST['no_fasilitas'];
 
 //inquiry data claim 
-$url = 'localhost:8081/api/claim/inquiryClaim';
+$url = '10.20.10.16:8088/api/claim/inquiryClaim';
 $curl = curl_init();
 curl_setopt($curl, CURLOPT_POST, 1);
 
@@ -59,7 +59,7 @@ if($result['dataClaim'][0]['statusPinjaman'] == 1 && ($result['dataClaim'][0]['k
 
 //move data pengajuam claim kur gen 2 to table history
 function moveDataClaimToHistory($noRekening){
-    $url = 'localhost:8081/api/claim/moveDataClaim';
+    $url = '10.20.10.16:8088/api/claim/moveDataClaim';
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_POST, 1);
 
