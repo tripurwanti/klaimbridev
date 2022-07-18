@@ -21,6 +21,66 @@ $tahun         = substr($_POST['tgl_mulai'], 0, 4);
 $plafond    = $_POST['plafond'];
 $plafondx    = number_format($plafond, 2, ",", ".");
 $banyak_dok    = $_POST['banyak_dokumen'];
+$norekPinjaman = $_POST['no_fasilitas'];
+
+//inquiry data claim 
+$url = 'localhost:8081/api/claim/inquiryClaim';
+$curl = curl_init();
+curl_setopt($curl, CURLOPT_POST, 1);
+
+$payload = json_encode(array("nomorPeserta" => $norekPinjaman));
+if ($payload) {
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
+}
+curl_setopt($curl, CURLOPT_URL, $url);
+curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+    'Content-Type: application/json',
+));
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+
+$resultcurl = curl_exec($curl);
+curl_close($curl);
+
+$result = json_decode($resultcurl, true);
+if($result['dataClaim'][0]['statusPinjaman'] == 1 && ($result['dataClaim'][0]['kolektabilitias'] == 1 || $result['dataClaim'][0]['kolektabilitias'] == 2 || $result['dataClaim'][0]['kolektabilitias'] == 3)){
+    moveDataClaimToHistory($noPeserta);
+    echo "<script>window.alert('Status claim : " .$result['dataClaim'][0]['claimStatusDesc']. ". Data telah dibatalkan, mohon cek menu batal klaim')
+    window.location=(href='http://localhost/klaimbridev/media.php?module=klaim&q=0&title=Belum%20Diverifikasi')
+    </script>";
+    exit;
+} else if ($result['dataClaim'][0]['statusPinjaman'] == 2) {
+    moveDataClaimToHistory($noPeserta);
+    echo "<script>window.alert('Status claim : " .$result['dataClaim'][0]['claimStatusDesc']. ". Data telah dibatalkan, mohon cek menu batal klaim')
+    window.location=(href='http://localhost/klaimbridev/media.php?module=klaim&q=0&title=Belum%20Diverifikasi')
+    </script>";
+    exit;
+}
+
+//move data pengajuam claim kur gen 2 to table history
+function moveDataClaimToHistory($noRekening){
+    $url = 'localhost:8081/api/claim/moveDataClaim';
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_POST, 1);
+
+    $payload = json_encode(array("nomorPeserta" => $noRekening));
+    if ($payload) {
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
+    }
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/json',
+    ));
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+
+    // EXECUTE:
+    $resultcurl = curl_exec($curl);
+    // if (!$resultcurl) {
+    //     die("Connection Failure");
+    // }
+    curl_close($curl);
+}
 
 session_start();
 if (isset($_POST['doklengkap'])) {
