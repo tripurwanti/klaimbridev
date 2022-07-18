@@ -220,7 +220,10 @@ $queryGetDataRc2 = mssql_query("SELECT no_rekening, nominal_klaim, tgl_rek_koran
 
 $no = 1;
 
-while ($dq = mssql_fetch_array($queryGetDataRc2)) {
+$Datadq = mssql_fetch_array($queryGetDataRc2);
+// foreach ($colors as $value)
+foreach ($Datadq as $dq) {
+// while ($dq = mssql_fetch_array($queryGetDataRc2)) {
 
     $noRekeningRc = $dq['no_rekening'];
     $nominalRc = $dq['nominal_klaim'];

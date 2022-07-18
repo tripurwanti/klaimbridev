@@ -49,13 +49,18 @@ function inquiryClaim($noPeserta){
     curl_close($curl);
 
     $result = json_decode($resultcurl, true);
-    if($result['dataClaim'][0]['claimStatus'] == 7){
+    if($result['dataClaim'][0]['statusPinjaman'] == 1 && ($result['dataClaim'][0]['kolektabilitias'] == 1 || $result['dataClaim'][0]['kolektabilitias'] == 2 || $result['dataClaim'][0]['kolektabilitias'] == 3)){
         moveDataClaimToHistory($noPeserta);
-        echo "<script>window.alert('Status claim : " .$result['dataClaim'][0]['claimStatusDesc']. ". Data telah dibatalkan, mohon cek menu batal klaim')
+        echo "<script>window.alert('Status claim : " .$result['dataClaim'][0]['message']. ". Data telah dibatalkan, mohon cek menu batal klaim')
+        window.location=(href='http://localhost/klaimbridev/media.php?module=klaim&q=0&title=Belum%20Diverifikasi')
+        </script>";
+    } else if ($result['dataClaim'][0]['statusPinjaman'] == 2) {
+        moveDataClaimToHistory($noPeserta);
+        echo "<script>window.alert('Status claim : " .$result['dataClaim'][0]['message']. ". Data telah dibatalkan, mohon cek menu batal klaim')
         window.location=(href='http://localhost/klaimbridev/media.php?module=klaim&q=0&title=Belum%20Diverifikasi')
         </script>";
     } else {
-        echo "<script>window.alert('Status claim : " .$result['dataClaim'][0]['claimStatusDesc']. "');
+        echo "<script>window.alert('Status claim : " .$result['dataClaim'][0]['message']. "');
         </script>";
     }
     
